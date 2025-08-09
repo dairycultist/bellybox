@@ -84,7 +84,7 @@ const endpoints = [
 
                 if (row) {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `<img src="/img/${ row.Filename }" width="100%">`));
+                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `<img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">`));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");
