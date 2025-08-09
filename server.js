@@ -3,7 +3,17 @@ var multiparty = require("multiparty");
 const { createServer } = require("node:http");
 const sqlite3 = require("sqlite3").verbose();
 
-const db = new sqlite3.Database(":memory:");
+const db = new sqlite3.Database("db");
+
+db.serialize(() => {
+
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Images';", (err, row) => {
+
+        // create Images table if it doesn't exist
+        if (!row)
+            db.run("CREATE TABLE Images (ID TEXT);"); // CreationTimestamp INTEGER
+    });
+});
 
 const port = 3000;
 const hostname = "127.0.0.1";
@@ -16,13 +26,16 @@ const endpoints = [
 
             let images = "";
 
-            fs.readdirSync("./img").forEach(file => {
-                
-                images += `<img src="img/${ file }" height="300">`;
-            });
+            db.each("SELECT ID FROM Images", (err, row) => {
 
-            res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-            res.end(fs.readFileSync("index.html", "utf8").replace("<!-- insert -->", images));
+                images += `<img src="img/${ row.ID }.png" height="300">`;
+
+            }, () => {
+                
+                // respond on complete
+                res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+                res.end(fs.readFileSync("index.html", "utf8").replace("<!-- insert -->", images));
+            });
         }
     },
     {
@@ -50,6 +63,8 @@ const endpoints = [
                     var imageID = Math.floor(Math.random() * 1000);
 
                     fs.rename(image.path, "img/" + imageID + "." + image.originalFilename.split(".").at(-1), (err) => {});
+
+                    db.run(`INSERT INTO Images VALUES ("${ imageID }");`);
                 }
 
                 endpoints[0].respond(req, res);
