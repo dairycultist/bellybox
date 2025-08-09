@@ -2,6 +2,8 @@
 
 https://www.npmjs.com/package/sqlite3
 
+no javascript required!
+
 a booru specifically for non-nude anime breasts in this range 
 
 ![](range.png)
