@@ -11,7 +11,7 @@ db.serialize(() => {
 
         // create Images table if it doesn't exist
         if (!row)
-            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT);"); // CreationTimestamp INTEGER
+            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT);"); // Tags TEXT "furry;biggest", Description TEXT, CreationTimestamp INTEGER
     });
 });
 
@@ -35,7 +35,7 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(fs.readFileSync("index.html", "utf8").replace("<!-- insert -->", images));
+                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images));
             });
         }
     },
@@ -84,7 +84,7 @@ const endpoints = [
 
                 if (row) {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(fs.readFileSync("image.html", "utf8").replace("<!-- filename -->", row.Filename));
+                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `<img src="/img/${ row.Filename }" width="100%">`));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");
