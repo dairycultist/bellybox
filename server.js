@@ -63,12 +63,14 @@ const endpoints = [
 
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
-                    // generate unique ID
+                    // generate unique Base62 ID
                     let ID = '';
                     let index = Math.floor(Math.random() * 10000); // should switch to sequential ID system, but idc rn
 
-                    for (let i = 0; i < Math.floor(index / 62) + 1; i++)
-                        ID += 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'.charAt(index % 62);
+                    do {
+                        ID ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.charAt(index % 62) + ID;
+                        index = Math.floor(index / 62);
+                    } while (index > 0);
 
                     // rename downloaded image to filename based on unique ID
                     const filename = ID + "." + image.originalFilename.split(".").at(-1);
