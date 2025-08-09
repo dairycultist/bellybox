@@ -87,7 +87,7 @@ const endpoints = [
                     res.end(fs.readFileSync("image.html", "utf8").replace("<!-- filename -->", row.Filename));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
-                    res.end("400 Not Found\n" + requested_endpoint);
+                    res.end("400 Not Found");
                 }
             });
         }
