@@ -1,5 +1,12 @@
 # boob-booru
 
+```
+npm install sqlite3
+npm install multiparty
+```
+
+https://www.npmjs.com/package/multiparty
+
 https://www.npmjs.com/package/sqlite3
 
 no javascript required!

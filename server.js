@@ -37,9 +37,11 @@ const endpoints = [
 
                 endpoints[0].respond(req, res);
 
+                console.log(`Recieved image ${ files.image[0].originalFilename } of size ${ files.image[0].size }b`);
+
                 // var imageID = Math.floor(Math.random() * 1000);
 
-                console.log(fields);
+                fs.rename(files.image[0].path, "test.png", (err) => {});
             });
         }
     }
