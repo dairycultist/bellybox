@@ -11,12 +11,6 @@ const hostname = "127.0.0.1";
 //     return `<script>var date = new Date(${ unix }); document.write(date.toLocaleDateString() + " " + date.toLocaleTimeString());</script>`;
 // }
 
-// function respond400(req, res) {
-
-//     res.writeHead(400, { "Content-Type": "text/plain" });
-//     res.end("Error 400: Bad request endpoint\n" + req.method + " " + req.url);
-// }
-
 function post(req, maxBytes, onExcessivelyHeavy, onSuccessfulRead) {
 
     var body = "";
@@ -131,8 +125,8 @@ createServer((req, res) => {
         }
     }
 
-    // return 404 if no endpoint matched
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.end("404 Not Found");
+    // return 400 if no endpoint matched
+    res.writeHead(400, { "Content-Type": "text/plain" });
+    res.end("400 Bad Endpoint\n" + requested_endpoint);
 
 }).listen(port, hostname, () => console.log(`Starting @ http://${ hostname }:${ port }/`));
