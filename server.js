@@ -20,6 +20,7 @@ const hostname = "127.0.0.1";
 const postcode = "ABC";
 
 const endpoints = [
+    // index
     {
         regex: new RegExp("^GET /$"),
         respond: (req, res) => {
@@ -28,7 +29,7 @@ const endpoints = [
 
             db.each("SELECT ID, Filename FROM Images", (err, row) => {
 
-                images += `<a href="image/${ row.ID }"><img src="img/${ row.Filename }" height="300"></a>`;
+                images += `<a href="image/${ row.ID }"><img src="/img/${ row.Filename }" height="300"></a>`;
 
             }, () => {
                 
@@ -38,6 +39,7 @@ const endpoints = [
             });
         }
     },
+    // fetching an image file
     {
         regex: new RegExp("^GET /img/"),
         respond: (req, res) => {
@@ -48,6 +50,7 @@ const endpoints = [
             res.end(image);
         }
     },
+    // posting an image to the booru
     {
         regex: new RegExp("^POST /post_image"),
         respond: (req, res) => {
@@ -72,11 +75,21 @@ const endpoints = [
             });
         }
     },
+    // dedicated page for an image
     {
         regex: new RegExp("^GET /image/"),
         respond: (req, res) => {
 
-            
+            db.get(`SELECT Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }"`, (err, row) => {
+
+                if (row) {
+                    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+                    res.end(fs.readFileSync("image.html", "utf8").replace("<!-- filename -->", row.Filename));
+                } else {
+                    res.writeHead(400, { "Content-Type": "text/plain" });
+                    res.end("400 Not Found\n" + requested_endpoint);
+                }
+            });
         }
     }
 ];
