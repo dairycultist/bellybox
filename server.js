@@ -27,7 +27,7 @@ const endpoints = [
 
             let images = "";
 
-            db.each("SELECT ID, Filename FROM Images", (err, row) => {
+            db.each("SELECT ID, Filename FROM Images;", (err, row) => {
 
                 images += `<a href="image/${ row.ID }"><img src="/img/${ row.Filename }" height="300"></a>`;
 
@@ -63,11 +63,19 @@ const endpoints = [
 
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
-                    const ID = Math.floor(Math.random() * 1000);
+                    // generate unique ID
+                    let ID = '';
+                    let index = Math.floor(Math.random() * 10000); // should switch to sequential ID system, but idc rn
+
+                    for (let i = 0; i < Math.floor(index / 62) + 1; i++)
+                        ID += 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'.charAt(index % 62);
+
+                    // rename downloaded image to filename based on unique ID
                     const filename = ID + "." + image.originalFilename.split(".").at(-1);
 
                     fs.rename(image.path, "img/" + filename, (err) => {});
 
+                    // add database entry
                     db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }");`);
                 }
 
@@ -80,7 +88,7 @@ const endpoints = [
         regex: new RegExp("^GET /image/"),
         respond: (req, res) => {
 
-            db.get(`SELECT Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }"`, (err, row) => {
+            db.get(`SELECT Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
 
                 if (row) {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
