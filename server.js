@@ -11,7 +11,7 @@ db.serialize(() => {
 
         // create Images table if it doesn't exist
         if (!row)
-            db.run("CREATE TABLE Images (ID TEXT);"); // CreationTimestamp INTEGER
+            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT);"); // CreationTimestamp INTEGER
     });
 });
 
@@ -26,9 +26,9 @@ const endpoints = [
 
             let images = "";
 
-            db.each("SELECT ID FROM Images", (err, row) => {
+            db.each("SELECT ID, Filename FROM Images", (err, row) => {
 
-                images += `<img src="img/${ row.ID }.png" height="300">`;
+                images += `<a href="image/${ row.ID }"><img src="img/${ row.Filename }" height="300"></a>`;
 
             }, () => {
                 
@@ -60,15 +60,23 @@ const endpoints = [
 
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
-                    var imageID = Math.floor(Math.random() * 1000);
+                    const ID = Math.floor(Math.random() * 1000);
+                    const filename = ID + "." + image.originalFilename.split(".").at(-1);
 
-                    fs.rename(image.path, "img/" + imageID + "." + image.originalFilename.split(".").at(-1), (err) => {});
+                    fs.rename(image.path, "img/" + filename, (err) => {});
 
-                    db.run(`INSERT INTO Images VALUES ("${ imageID }");`);
+                    db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }");`);
                 }
 
                 endpoints[0].respond(req, res);
             });
+        }
+    },
+    {
+        regex: new RegExp("^GET /image/"),
+        respond: (req, res) => {
+
+            
         }
     }
 ];
