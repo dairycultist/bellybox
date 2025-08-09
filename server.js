@@ -7,16 +7,22 @@ const db = new sqlite3.Database(":memory:");
 
 const port = 3000;
 const hostname = "127.0.0.1";
+const postcode = "ABC";
 
 const endpoints = [
     {
         regex: new RegExp("^GET /$"),
         respond: (req, res) => {
 
-            const indexText = fs.readFileSync("index.html", "utf8");
+            let images = "";
+
+            fs.readdirSync("./img").forEach(file => {
+                
+                images += `<img src="img/${ file }" height="300">`;
+            });
 
             res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-            res.end(indexText);
+            res.end(fs.readFileSync("index.html", "utf8").replace("<!-- insert -->", images));
         }
     },
     {
@@ -35,15 +41,18 @@ const endpoints = [
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
+                if (fields.postcode == postcode) {
+
+                    const image = files.image[0];
+
+                    console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
+
+                    var imageID = Math.floor(Math.random() * 1000);
+
+                    fs.rename(image.path, "img/" + imageID + "." + image.originalFilename.split(".").at(-1), (err) => {});
+                }
+
                 endpoints[0].respond(req, res);
-
-                const image = files.image[0];
-
-                console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
-
-                var imageID = Math.floor(Math.random() * 1000);
-
-                fs.rename(image.path, "img/" + imageID + "." + image.originalFilename.split(".").at(-1), (err) => {});
             });
         }
     }
