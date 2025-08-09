@@ -63,9 +63,9 @@ const endpoints = [
 
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
-                    // generate unique Base62 ID
+                    // generate unique Base62 ID for this image
                     let ID = '';
-                    let index = Math.floor(Math.random() * 10000); // should switch to sequential ID system, but idc rn
+                    let index = Math.floor(Math.random() * 999999999999); // TODO switch to sequential ID system to prevent collisions
 
                     do {
                         ID ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.charAt(index % 62) + ID;
