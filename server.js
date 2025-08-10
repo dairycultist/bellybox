@@ -1,5 +1,6 @@
 const fs = require("fs");
-var multiparty = require("multiparty");
+const multiparty = require("multiparty");
+const { imageSizeFromFile } = require("image-size/fromFile");
 const { createServer } = require("node:http");
 const sqlite3 = require("sqlite3").verbose();
 
@@ -33,6 +34,8 @@ const endpoints = [
 
             }, () => {
 
+                // adding this at the end prevents the last row from filling the whole row
+                images += "<div style='flex: 200000;'></div>";
                 images += "</div>";
                 
                 // respond on complete
@@ -74,13 +77,18 @@ const endpoints = [
                         index = Math.floor(index / 62);
                     } while (index > 0);
 
-                    // rename downloaded image to filename based on unique ID
                     const filename = ID + "." + image.originalFilename.split(".").at(-1);
+                    const filepath = "img/" + filename;
 
-                    fs.rename(image.path, "img/" + filename, (err) => {});
+                    // get image size (for masonry)
+                    imageSizeFromFile(image.path).then((image_size) => {
 
-                    // add database entry
-                    db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 1.0 });`);
+                        // rename downloaded image to filename based on unique ID
+                        fs.rename(image.path, filepath, (err) => {});
+
+                        // add database entry
+                        db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height });`); // 300 is the min row height
+                    });
                 }
 
                 endpoints[0].respond(req, res);
