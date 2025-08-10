@@ -62,9 +62,19 @@ const endpoints = [
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
-                if (fields.postcode == postcode) {
+                const image = files.image[0];
 
-                    const image = files.image[0];
+                if (fields.postcode != postcode) {
+
+                    res.writeHead(401, { "Content-Type": "text/plain" });
+                    res.end("401 Unauthorized (Invalid Postcode)");
+
+                } else if (image.size == 0) {
+
+                    res.writeHead(400, { "Content-Type": "text/plain" });
+                    res.end("400 Bad Request (Must Attach File)");
+
+                } else {
 
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
@@ -88,10 +98,11 @@ const endpoints = [
 
                         // add database entry
                         db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height });`); // 300 is the min row height
+
+                        // load index
+                        endpoints[0].respond(req, res);
                     });
                 }
-
-                endpoints[0].respond(req, res);
             });
         }
     },
