@@ -11,7 +11,7 @@ db.serialize(() => {
 
         // create Images table if it doesn't exist
         if (!row)
-            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT);"); // Tags TEXT "furry;biggest", Description TEXT, CreationTimestamp INTEGER
+            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT);"); // Tags TEXT "furry;biggest", Description TEXT, CreationTimestamp INTEGER
     });
 });
 
@@ -25,13 +25,15 @@ const endpoints = [
         regex: new RegExp("^GET /$"),
         respond: (req, res) => {
 
-            let images = "";
+            let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-            db.each("SELECT ID, Filename FROM Images;", (err, row) => {
+            db.each("SELECT ID, Filename, MasonryFlex FROM Images;", (err, row) => {
 
-                images += `<a href="image/${ row.ID }"><img src="/img/${ row.Filename }" height="300"></a>`;
+                images += `<a href="image/${ row.ID }" style="flex: ${ row.MasonryFlex } 1 ${ row.MasonryFlex }px; width: ${ row.MasonryFlex }px;"><img src="/img/${ row.Filename }" style="width: 100%;"></a>`;
 
             }, () => {
+
+                images += "</div>";
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -78,7 +80,7 @@ const endpoints = [
                     fs.rename(image.path, "img/" + filename, (err) => {});
 
                     // add database entry
-                    db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }");`);
+                    db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 1.0 });`);
                 }
 
                 endpoints[0].respond(req, res);
