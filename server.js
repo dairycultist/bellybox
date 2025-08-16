@@ -25,6 +25,7 @@ db.serialize(() => {
 const port = 3000;
 const hostname = "127.0.0.1";
 const postcode = "ABC";
+const admincode = "ABC";
 
 const endpoints = [
     // index
@@ -114,38 +115,46 @@ const endpoints = [
     },
     // delete an image
     {
-        regex: new RegExp("^GET /force_delete"),
+        regex: new RegExp("^POST /force_delete"),
         respond: (req, res) => {
 
-            const query = querystring.parse(req.url.split("?", 2)[1]);
+            new multiparty.Form().parse(req, function(err, fields, files) {
 
-            if (query.postcode != postcode) {
+                if (err) {
 
-                res.writeHead(401, { "Content-Type": "text/plain" });
-                res.end("401 Unauthorized (Invalid Postcode)");
-                return;
-            }
-
-            db.get(`SELECT Filename FROM Images WHERE ID = "${ query.id }";`, (err, row) => {
-
-                // ensure DB entry exists for this ID
-                if (!row) {
-
-                    res.writeHead(404, { "Content-Type": "text/plain" });
-                    res.end("404 Not Found");
+                    res.writeHead(400, { "Content-Type": "text/plain" });
+                    res.end("400 Could not parse request");
                     return;
                 }
 
-                // delete entry
-                db.run(`DELETE FROM Images WHERE ID = "${ query.id }"`);
+                if (fields.admincode != admincode) {
 
-                // delete file
-                if (fs.existsSync("img/" + row.Filename)) {
-                    fs.unlinkSync("img/" + row.Filename);
+                    res.writeHead(401, { "Content-Type": "text/plain" });
+                    res.end("401 Unauthorized (Invalid Admincode)");
+                    return;
                 }
 
-                // load index
-                endpoints[0].respond(req, res);
+                db.get(`SELECT Filename FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
+
+                    // ensure DB entry exists for this ID
+                    if (!row) {
+
+                        res.writeHead(404, { "Content-Type": "text/plain" });
+                        res.end("404 Not Found");
+                        return;
+                    }
+
+                    // delete entry
+                    db.run(`DELETE FROM Images WHERE ID = "${ fields.id }"`);
+
+                    // delete file
+                    if (fs.existsSync("img/" + row.Filename)) {
+                        fs.unlinkSync("img/" + row.Filename);
+                    }
+
+                    // load index
+                    endpoints[0].respond(req, res);
+                });
             });
         }
     },
@@ -160,19 +169,19 @@ const endpoints = [
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                     res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `
                         <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
-                        <form action="/force_delete">
+                        <form action="/force_delete" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Force-delete</strong>
                             <br><br>
                             <table>
                                 <tr>
-                                    <td><label for="postcode">Postcode: </label></td>
-                                    <td><input type="text" id="postcode" name="postcode"></td>
+                                    <td><label for="admincode">Admincode: </label></td>
+                                    <td><input type="password" id="admincode" name="admincode"></td>
                                 </tr>
                             </table>
                             <input type="submit" value="Delete"/>
                         </form>
-                        <form action="/request_delete" style="filter: opacity(30%);">
+                        <form action="/request_delete" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request deletion</strong>
                             <br><br>
@@ -184,7 +193,7 @@ const endpoints = [
                             </table>
                             <input type="submit" value="Request" disabled/>
                         </form>
-                        <form action="/request_retag" style="filter: opacity(30%);">
+                        <form action="/request_retag" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request retag</strong>
                             <br><br>
