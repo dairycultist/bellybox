@@ -129,7 +129,7 @@ const endpoints = [
 
                         // add database entry (300 is the min row height)
                         db.run(`
-                            INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "${ "".trim() }", "${ "".trim() }", ${ Math.floor(Date.now() / 1000) }, "", "");
+                            INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");
                         `);
 
                         // load index
@@ -206,7 +206,7 @@ const endpoints = [
                         <input type="checkbox" name="tag" id="humanoid" value="humanoid">
                         <label for="humanoid"> Humanoid</label><br>
                         <input type="checkbox" name="tag" id="furry" value="furry">
-                        <label for="furry"> Furry</label><br>    
+                        <label for="furry"> Furry</label><br>
                     `));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
