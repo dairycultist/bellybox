@@ -172,19 +172,19 @@ const endpoints = [
                             </table>
                             <input type="submit" value="Delete"/>
                         </form>
-                        <!--<form action="/request_delete">
+                        <form action="/request_delete" style="filter: opacity(30%);">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request deletion</strong>
                             <br><br>
                             <table>
                                 <tr>
                                     <td><label for="delete-reason">Reason: </label></td>
-                                    <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, copyright..."></td>
+                                    <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, broken..."></td>
                                 </tr>
                             </table>
-                            <input type="submit" value="Request"/>
-                        </form>-->
-                        <!--<form action="/request_retag">
+                            <input type="submit" value="Request" disabled/>
+                        </form>
+                        <form action="/request_retag" style="filter: opacity(30%);">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request retag</strong>
                             <br><br>
@@ -194,8 +194,8 @@ const endpoints = [
                                     <td><input type="text" id="retag-reason" name="reason" style="width: 400px;"></td>
                                 </tr>
                             </table>
-                            <input type="submit" value="Request"/>
-                        </form>-->
+                            <input type="submit" value="Request" disabled/>
+                        </form>
                     `));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
