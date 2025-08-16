@@ -1,10 +1,16 @@
-# boob-booru
+# bellybox
 
-a booru specifically for non-nude anime breasts in this range. no javascript required!
-
-![](img/range.png)
+a booru for fat female anime bellies. no javascript required!
 
 I don't think anyone would actually use a forum for chatting here, so booru it is. it's gonna be invite-only with accounts tho since I don't want leet haxxors
+
+**Feature plan:**
+- single upload
+- bulk upload
+- tagging
+- description
+- request deletion
+- request retag
 
 ## Dependencies
 
