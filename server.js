@@ -56,10 +56,17 @@ const endpoints = [
         regex: new RegExp("^GET /img/"),
         respond: (req, res) => {
 
-            const image = fs.readFileSync("." + req.url);
+            try {
+                const image = fs.readFileSync("." + req.url);
 
-            res.writeHead(200, { "Content-Type": "image/" + req.url.split(".").at(-1) });
-            res.end(image);
+                res.writeHead(200, { "Content-Type": "image/" + req.url.split(".").at(-1) });
+                res.end(image);
+
+            } catch (error) {
+
+                res.writeHead(404, { "Content-Type": "text/plain" });
+                res.end("404 Not Found");
+            }
         }
     },
     // posting an image to the booru
