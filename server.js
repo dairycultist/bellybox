@@ -60,12 +60,31 @@ const endpoints = [
         regex: new RegExp("^GET /\\\?tag="),
         respond: (req, res) => {
 
-            const searchTags = req.url.split("?tag=", 2)[1].split("&tag=");
+            const tagPattern = "%" + req.url.split("?tag=", 2)[1].split("&tag=").join("%") + "%";
 
-            console.log(searchTags);
+            console.log(tagPattern);
 
-            // TEMP load index
-            endpoints[0].respond(req, res);
+            let images = "<div style='display: flex; flex-wrap: wrap;'>";
+
+            db.each(`SELECT ID, Filename, MasonryFlex FROM Images WHERE Tags LIKE '${tagPattern}';`, (err, row) => {
+
+                images += `<a href="image/${ row.ID }" style="flex: ${ row.MasonryFlex } 1 ${ row.MasonryFlex }px; width: ${ row.MasonryFlex }px;"><img src="/img/${ row.Filename }" style="width: 100%;"></a>`;
+
+            }, () => {
+
+                // adding this at the end prevents the last row from filling the whole row
+                images += "<div style='flex: 200000;'></div>";
+                images += "</div>";
+                
+                // respond on complete
+                res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", `
+                    <input type="checkbox" name="tag" id="humanoid" value="humanoid">
+                    <label for="humanoid"> Humanoid</label><br>
+                    <input type="checkbox" name="tag" id="furry" value="furry">
+                    <label for="furry"> Furry</label><br>    
+                `));
+            });
         }
     },
     // fetching an image file
