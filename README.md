@@ -4,12 +4,12 @@ A lightweight, private booru software for fat female anime bellies. Client need 
 
 **Feature plan:**
 - bulk upload
-- tagging
-- tag searching (query parameter)
 - description
 - pagination
 - request deletion
-- request retag
+- request edit
+- config with port, hostname, postcode, admincode, and array of accepted tags (which is used to generate tag input html)
+- thumbnail saving (ID_thumb.png, much smaller)
 
 maybe accounts? invite-only ofc
 

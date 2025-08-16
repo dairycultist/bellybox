@@ -21,7 +21,6 @@ db.serialize(() => {
     });
 });
 
-// TODO create a config with [tags] (generate tag input html from this), port, hostname, postcode, admincode
 function getSPA(insert) {
 
     const getTagInputHTML = (idUniquifier) => {
