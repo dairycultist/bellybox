@@ -124,20 +124,27 @@ const endpoints = [
                         <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
                         <br>
                         <form action="/request_deletion">
-
                             <strong>Request deletion</strong>
                             <br><br>
-
                             <table>
                                 <tr>
                                     <td><label for="reason">Reason: </label></td>
-                                    <td><input type="text" id="reason" name="reason"></td>
+                                    <td><input type="text" id="reason" name="reason" placeholder="Duplicate, inappropriate, copyright..." style="width: 400px;"></td>
                                 </tr>
                             </table>
-
                             <input type="submit" value="Submit"/>
-
                         </form>
+                        <!--<form action="/request_retag">
+                            <strong>Request retag</strong>
+                            <br><br>
+                            <table>
+                                <tr>
+                                    <td><label for="reason">Reason: </label></td>
+                                    <td><input type="text" id="reason" name="reason" style="width: 400px;"></td>
+                                </tr>
+                            </table>
+                            <input type="submit" value="Submit"/>
+                        </form>-->
                     `));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
