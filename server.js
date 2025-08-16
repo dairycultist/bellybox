@@ -11,8 +11,13 @@ db.serialize(() => {
     db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Images';", (err, row) => {
 
         // create Images table if it doesn't exist
-        if (!row)
-            db.run("CREATE TABLE Images (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT);"); // Tags TEXT "furry;biggest", Description TEXT, CreationTimestamp INTEGER
+        if (!row) {
+            db.run(`
+                    CREATE TABLE Images
+                    (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT, Description TEXT, Tags TEXT,
+                    CreationTimestamp INTEGER, DeleteRequest TEXT, RetagRequest TEXT);
+            `);
+        }
     });
 });
 
@@ -96,8 +101,8 @@ const endpoints = [
                         // rename downloaded image to filename based on unique ID
                         fs.rename(image.path, filepath, (err) => {});
 
-                        // add database entry
-                        db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height });`); // 300 is the min row height
+                        // add database entry (300 is the min row height)
+                        db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "", "", 0, "", "");`);
 
                         // load index
                         endpoints[0].respond(req, res);
@@ -115,7 +120,25 @@ const endpoints = [
 
                 if (row) {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `<img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">`));
+                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `
+                        <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
+                        <br>
+                        <form action="/request_deletion">
+
+                            <strong>Request deletion</strong>
+                            <br><br>
+
+                            <table>
+                                <tr>
+                                    <td><label for="reason">Reason: </label></td>
+                                    <td><input type="text" id="reason" name="reason"></td>
+                                </tr>
+                            </table>
+
+                            <input type="submit" value="Submit"/>
+
+                        </form>
+                    `));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");

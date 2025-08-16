@@ -3,7 +3,6 @@
 A lightweight, private booru software for fat female anime bellies. Client need not Javascript! 
 
 **Feature plan:**
-- single upload
 - bulk upload
 - tagging
 - description

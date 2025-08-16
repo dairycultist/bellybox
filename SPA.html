@@ -5,8 +5,9 @@
     <title>bellybox</title>
     <style>
         body { background: #fbeedd; font-family: sans-serif; display: flex; gap: 1em; }
-        a { color: #993333; }
+        a, strong { color: #993333; }
         h1 { text-align: center; }
+        form { border: 1px solid #d3b595; padding: 1em; max-width: 30em; }
     </style>
 </head>
 <body>
@@ -15,7 +16,10 @@
 
         <h1><a href="/">bellybox</a></h1>
 
-        <form action="/post_image" method="post" enctype="multipart/form-data" style="border: 1px solid #d3b595; padding: 1em; max-width: 30em;">
+        <form action="/post_image" method="post" enctype="multipart/form-data">
+
+            <strong>Single upload</strong>
+            <br><br>
 
             <table>
                 <tr>
