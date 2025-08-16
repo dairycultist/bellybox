@@ -1,5 +1,4 @@
 const fs = require("fs");
-const querystring = require("node:querystring");
 const multiparty = require("multiparty");
 const { imageSizeFromFile } = require("image-size/fromFile");
 const { createServer } = require("node:http");
@@ -16,7 +15,7 @@ db.serialize(() => {
             db.run(`
                     CREATE TABLE Images
                     (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT, Description TEXT, Tags TEXT,
-                    CreationTimestamp INTEGER, DeleteRequest TEXT, RetagRequest TEXT);
+                    CreationUnixTimestamp INTEGER, DeleteRequest TEXT, RetagRequest TEXT);
             `);
         }
     });
@@ -93,7 +92,7 @@ const endpoints = [
                     console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
 
                     // generate unique Base62 ID for this image
-                    let ID = '';
+                    let ID = "";
                     let index = Math.floor(Math.random() * 999999999999); // TODO switch to sequential ID system to prevent collisions
 
                     do {
@@ -111,7 +110,9 @@ const endpoints = [
                         fs.rename(image.path, filepath, (err) => {});
 
                         // add database entry (300 is the min row height)
-                        db.run(`INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "", "", 0, "", "");`);
+                        db.run(`
+                            INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "", "", ${ Math.floor(Date.now() / 1000) }, "", "");
+                        `);
 
                         // load index
                         endpoints[0].respond(req, res);
@@ -170,12 +171,28 @@ const endpoints = [
         regex: new RegExp("^GET /image/"),
         respond: (req, res) => {
 
-            db.get(`SELECT ID, Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
+            db.get(`SELECT ID, Filename, CreationUnixTimestamp FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
 
                 if (row) {
+
+                    // put this into an imagepage_widget.html
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                     res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `
                         <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
+                        <table>
+                            <tr>
+                                <th>Uploaded: </th>
+                                <td>${ new Date(row.CreationUnixTimestamp * 1000) }</td>
+                            </tr>
+                            <tr>
+                                <th>Tags: </th>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <th>Description: </th>
+                                <td>-</td>
+                            </tr>
+                        </table>
                         <form action="/force_delete" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Force-delete</strong>
