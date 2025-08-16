@@ -1,8 +1,6 @@
 # bellybox
 
-a booru for fat female anime bellies. no javascript required!
-
-I don't think anyone would actually use a forum for chatting here, so booru it is. it's gonna be invite-only with accounts tho since I don't want leet haxxors
+A lightweight, private booru software for fat female anime bellies. Client need not Javascript! 
 
 **Feature plan:**
 - single upload
@@ -11,6 +9,10 @@ I don't think anyone would actually use a forum for chatting here, so booru it i
 - description
 - request deletion
 - request retag
+
+maybe accounts? invite-only ofc
+
+I don't think anyone would actually use a forum for chatting here, so booru it is.
 
 ## Dependencies
 
