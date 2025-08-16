@@ -21,6 +21,13 @@ db.serialize(() => {
     });
 });
 
+const tag_input_html = `
+    <input type="checkbox" name="tag" id="humanoid" value="humanoid">
+    <label for="humanoid"> Humanoid</label><br>
+    <input type="checkbox" name="tag" id="furry" value="furry">
+    <label for="furry"> Furry</label><br>
+`;
+
 const port = 3000;
 const hostname = "127.0.0.1";
 const postcode = "ABC";
@@ -46,12 +53,7 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", `
-                    <input type="checkbox" name="tag" id="humanoid" value="humanoid">
-                    <label for="humanoid"> Humanoid</label><br>
-                    <input type="checkbox" name="tag" id="furry" value="furry">
-                    <label for="furry"> Furry</label><br>    
-                `));
+                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", tag_input_html));
             });
         }
     },
@@ -78,12 +80,7 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", `
-                    <input type="checkbox" name="tag" id="humanoid" value="humanoid">
-                    <label for="humanoid"> Humanoid</label><br>
-                    <input type="checkbox" name="tag" id="furry" value="furry">
-                    <label for="furry"> Furry</label><br>    
-                `));
+                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", tag_input_html));
             });
         }
     },
@@ -213,20 +210,18 @@ const endpoints = [
                 if (row) {
 
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(fs.readFileSync("SPA.html", "utf8").replace(
-                        "<!-- insert -->",
-                        fs.readFileSync("imagepage_widget.html", "utf8")
-                            .replace("FILENAME", row.Filename)
-                            .replaceAll("ID", row.ID)
-                            .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
-                            .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
-                            .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
-                    ).replaceAll("<!-- tags -->", `
-                        <input type="checkbox" name="tag" id="humanoid" value="humanoid">
-                        <label for="humanoid"> Humanoid</label><br>
-                        <input type="checkbox" name="tag" id="furry" value="furry">
-                        <label for="furry"> Furry</label><br>
-                    `));
+                    res.end(
+                        fs.readFileSync("SPA.html", "utf8")
+                        .replace(
+                            "<!-- insert -->",
+                            fs.readFileSync("imagepage_widget.html", "utf8")
+                                .replace("FILENAME", row.Filename)
+                                .replaceAll("ID", row.ID)
+                                .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
+                                .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
+                                .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
+                        ).replaceAll("<!-- tags -->", tag_input_html)
+                    );
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");
