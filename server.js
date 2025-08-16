@@ -1,4 +1,5 @@
 const fs = require("fs");
+const querystring = require("node:querystring");
 const multiparty = require("multiparty");
 const { imageSizeFromFile } = require("image-size/fromFile");
 const { createServer } = require("node:http");
@@ -111,39 +112,84 @@ const endpoints = [
             });
         }
     },
+    // delete an image
+    {
+        regex: new RegExp("^GET /force_delete"),
+        respond: (req, res) => {
+
+            const query = querystring.parse(req.url.split("?", 2)[1]);
+
+            if (query.postcode != postcode) {
+
+                res.writeHead(401, { "Content-Type": "text/plain" });
+                res.end("401 Unauthorized (Invalid Postcode)");
+                return;
+            }
+
+            db.get(`SELECT Filename FROM Images WHERE ID = "${ query.id }";`, (err, row) => {
+
+                if (row) {
+
+                    // delete entry
+                    db.run(`DELETE FROM Images WHERE ID = "${ query.id }"`);
+
+                    // delete file
+                    if (fs.existsSync("img/" + row.Filename)) {
+                        fs.unlinkSync("img/" + row.Filename);
+                    }
+                }
+
+                // load index
+                endpoints[0].respond(req, res);
+            });
+        }
+    },
     // dedicated page for an image
     {
         regex: new RegExp("^GET /image/"),
         respond: (req, res) => {
 
-            db.get(`SELECT Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
+            db.get(`SELECT ID, Filename FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
 
                 if (row) {
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                     res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `
                         <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
-                        <br>
-                        <form action="/request_deletion">
+                        <form action="/force_delete">
+                            <input type="hidden" name="id" value="${ row.ID }">
+                            <strong>Force-delete</strong>
+                            <br><br>
+                            <table>
+                                <tr>
+                                    <td><label for="postcode">Postcode: </label></td>
+                                    <td><input type="text" id="postcode" name="postcode"></td>
+                                </tr>
+                            </table>
+                            <input type="submit" value="Delete"/>
+                        </form>
+                        <!--<form action="/request_delete">
+                            <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request deletion</strong>
                             <br><br>
                             <table>
                                 <tr>
-                                    <td><label for="reason">Reason: </label></td>
-                                    <td><input type="text" id="reason" name="reason" placeholder="Duplicate, inappropriate, copyright..." style="width: 400px;"></td>
+                                    <td><label for="delete-reason">Reason: </label></td>
+                                    <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, copyright..."></td>
                                 </tr>
                             </table>
-                            <input type="submit" value="Submit"/>
-                        </form>
+                            <input type="submit" value="Request"/>
+                        </form>-->
                         <!--<form action="/request_retag">
+                            <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request retag</strong>
                             <br><br>
                             <table>
                                 <tr>
-                                    <td><label for="reason">Reason: </label></td>
-                                    <td><input type="text" id="reason" name="reason" style="width: 400px;"></td>
+                                    <td><label for="retag-reason">Reason: </label></td>
+                                    <td><input type="text" id="retag-reason" name="reason" style="width: 400px;"></td>
                                 </tr>
                             </table>
-                            <input type="submit" value="Submit"/>
+                            <input type="submit" value="Request"/>
                         </form>-->
                     `));
                 } else {
