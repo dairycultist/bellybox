@@ -22,14 +22,22 @@ db.serialize(() => {
 });
 
 // TODO create a config with [tags] (generate tag input html from this), port, hostname, postcode, admincode
-function getTagInputHTML(idUniquifier) {
+function getSPA(insert) {
 
-    return `
-        <input type="checkbox" name="tag" id="humanoid_${ idUniquifier }" value="humanoid">
-        <label for="humanoid_${ idUniquifier }"> Humanoid</label><br>
-        <input type="checkbox" name="tag" id="furry_${ idUniquifier }" value="furry">
-        <label for="furry_${ idUniquifier }"> Furry</label><br>
-    `;
+    const getTagInputHTML = (idUniquifier) => {
+
+        return `
+            <input type="checkbox" name="tag" id="humanoid_${ idUniquifier }" value="humanoid">
+            <label for="humanoid_${ idUniquifier }"> Humanoid</label><br>
+            <input type="checkbox" name="tag" id="furry_${ idUniquifier }" value="furry">
+            <label for="furry_${ idUniquifier }"> Furry</label><br>
+        `;
+    };
+
+    return fs.readFileSync("SPA.html", "utf8")
+        .replace("<!-- insert -->", insert)
+        .replace("<!-- tags -->", getTagInputHTML("upload"))
+        .replace("<!-- tags -->", getTagInputHTML("filter"));
 }
 
 const port = 3000;
@@ -57,12 +65,7 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(
-                    fs.readFileSync("SPA.html", "utf8")
-                    .replace("<!-- insert -->", images)
-                    .replace("<!-- tags -->", getTagInputHTML("upload"))
-                    .replace("<!-- tags -->", getTagInputHTML("filter"))
-                );
+                res.end(getSPA(images));
             });
         }
     },
@@ -87,12 +90,7 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(
-                    fs.readFileSync("SPA.html", "utf8")
-                    .replace("<!-- insert -->", images)
-                    .replace("<!-- tags -->", getTagInputHTML("upload"))
-                    .replace("<!-- tags -->", getTagInputHTML("filter"))
-                );
+                res.end(getSPA(images));
             });
         }
     },
@@ -222,20 +220,14 @@ const endpoints = [
                 if (row) {
 
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(
-                        fs.readFileSync("SPA.html", "utf8")
-                        .replace(
-                            "<!-- insert -->",
-                            fs.readFileSync("imagepage_widget.html", "utf8")
-                                .replace("FILENAME", row.Filename)
-                                .replaceAll("ID", row.ID)
-                                .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
-                                .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
-                                .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
-                        )
-                        .replace("<!-- tags -->", getTagInputHTML("upload"))
-                        .replace("<!-- tags -->", getTagInputHTML("filter"))
-                    );
+                    res.end(getSPA(
+                        fs.readFileSync("imagepage_widget.html", "utf8")
+                            .replace("FILENAME", row.Filename)
+                            .replaceAll("ID", row.ID)
+                            .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
+                            .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
+                            .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
+                    ));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");
