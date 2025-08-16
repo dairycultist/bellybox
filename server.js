@@ -128,15 +128,20 @@ const endpoints = [
 
             db.get(`SELECT Filename FROM Images WHERE ID = "${ query.id }";`, (err, row) => {
 
-                if (row) {
+                // ensure DB entry exists for this ID
+                if (!row) {
 
-                    // delete entry
-                    db.run(`DELETE FROM Images WHERE ID = "${ query.id }"`);
+                    res.writeHead(404, { "Content-Type": "text/plain" });
+                    res.end("404 Not Found");
+                    return;
+                }
 
-                    // delete file
-                    if (fs.existsSync("img/" + row.Filename)) {
-                        fs.unlinkSync("img/" + row.Filename);
-                    }
+                // delete entry
+                db.run(`DELETE FROM Images WHERE ID = "${ query.id }"`);
+
+                // delete file
+                if (fs.existsSync("img/" + row.Filename)) {
+                    fs.unlinkSync("img/" + row.Filename);
                 }
 
                 // load index
