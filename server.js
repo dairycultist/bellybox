@@ -22,12 +22,15 @@ db.serialize(() => {
 });
 
 // TODO create a config with [tags] (generate tag input html from this), port, hostname, postcode, admincode
-const tag_input_html = `
-    <input type="checkbox" name="tag" id="humanoid" value="humanoid">
-    <label for="humanoid"> Humanoid</label><br>
-    <input type="checkbox" name="tag" id="furry" value="furry">
-    <label for="furry"> Furry</label><br>
-`;
+function getTagInputHTML(idUniquifier) {
+
+    return `
+        <input type="checkbox" name="tag" id="humanoid_${ idUniquifier }" value="humanoid">
+        <label for="humanoid_${ idUniquifier }"> Humanoid</label><br>
+        <input type="checkbox" name="tag" id="furry_${ idUniquifier }" value="furry">
+        <label for="furry_${ idUniquifier }"> Furry</label><br>
+    `;
+}
 
 const port = 3000;
 const hostname = "127.0.0.1";
@@ -54,7 +57,12 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", tag_input_html));
+                res.end(
+                    fs.readFileSync("SPA.html", "utf8")
+                    .replace("<!-- insert -->", images)
+                    .replace("<!-- tags -->", getTagInputHTML("upload"))
+                    .replace("<!-- tags -->", getTagInputHTML("filter"))
+                );
             });
         }
     },
@@ -65,11 +73,9 @@ const endpoints = [
 
             const tagWhere = req.url.split("?tag=", 2)[1].split("&tag=").map(tag => `Tags LIKE "%${ tag }%"`).join(" AND ");
 
-            console.log(tagWhere);
-
             let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-            db.each(`SELECT ID, Filename, MasonryFlex FROM Images WHERE ${tagWhere};`, (err, row) => {
+            db.each(`SELECT ID, Filename, MasonryFlex FROM Images WHERE ${ tagWhere };`, (err, row) => {
 
                 images += `<a href="image/${ row.ID }" style="flex: ${ row.MasonryFlex } 1 ${ row.MasonryFlex }px; width: ${ row.MasonryFlex }px;"><img src="/img/${ row.Filename }" style="width: 100%;"></a>`;
 
@@ -81,7 +87,12 @@ const endpoints = [
                 
                 // respond on complete
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images).replaceAll("<!-- tags -->", tag_input_html));
+                res.end(
+                    fs.readFileSync("SPA.html", "utf8")
+                    .replace("<!-- insert -->", images)
+                    .replace("<!-- tags -->", getTagInputHTML("upload"))
+                    .replace("<!-- tags -->", getTagInputHTML("filter"))
+                );
             });
         }
     },
@@ -221,7 +232,9 @@ const endpoints = [
                                 .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
                                 .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
                                 .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
-                        ).replaceAll("<!-- tags -->", tag_input_html)
+                        )
+                        .replace("<!-- tags -->", getTagInputHTML("upload"))
+                        .replace("<!-- tags -->", getTagInputHTML("filter"))
                     );
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
