@@ -5,7 +5,9 @@ A lightweight, private booru software for fat female anime bellies. Client need 
 **Feature plan:**
 - bulk upload
 - tagging
+- tag searching (query parameter)
 - description
+- pagination
 - request deletion
 - request retag
 
