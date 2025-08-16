@@ -124,7 +124,7 @@ const endpoints = [
 
                         // add database entry (300 is the min row height)
                         db.run(`
-                            INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "", "", ${ Math.floor(Date.now() / 1000) }, "", "");
+                            INSERT INTO Images VALUES ("${ ID }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "${ "".trim() }", "${ "".trim() }", ${ Math.floor(Date.now() / 1000) }, "", "");
                         `);
 
                         // load index
@@ -184,7 +184,7 @@ const endpoints = [
         regex: new RegExp("^GET /image/"),
         respond: (req, res) => {
 
-            db.get(`SELECT ID, Filename, CreationUnixTimestamp FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
+            db.get(`SELECT ID, Filename, Description, Tags, CreationUnixTimestamp FROM Images WHERE ID = "${ req.url.split("/").at(-1) }";`, (err, row) => {
 
                 if (row) {
 
@@ -195,6 +195,8 @@ const endpoints = [
                             .replace("FILENAME", row.Filename)
                             .replaceAll("ID", row.ID)
                             .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
+                            .replace("TAGS", row.Tags.length == 0 ? "∅" : row.Tags)
+                            .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
                     ));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
