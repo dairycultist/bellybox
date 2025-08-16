@@ -188,61 +188,14 @@ const endpoints = [
 
                 if (row) {
 
-                    // put this into an imagepage_widget.html
                     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", `
-                        <img src="/img/${ row.Filename }" style="max-width: 100%; max-height: 90vh;">
-                        <table>
-                            <tr>
-                                <th>Uploaded: </th>
-                                <td>${ new Date(row.CreationUnixTimestamp * 1000) }</td>
-                            </tr>
-                            <tr>
-                                <th>Tags: </th>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <th>Description: </th>
-                                <td>-</td>
-                            </tr>
-                        </table>
-                        <form action="/force_delete" method="post" enctype="multipart/form-data">
-                            <input type="hidden" name="id" value="${ row.ID }">
-                            <strong>Force-delete</strong>
-                            <br><br>
-                            <table>
-                                <tr>
-                                    <td><label for="admincode">Admincode: </label></td>
-                                    <td><input type="password" id="admincode" name="admincode"></td>
-                                </tr>
-                            </table>
-                            <input type="submit" value="Delete"/>
-                        </form>
-                        <form action="/request_edit" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
-                            <input type="hidden" name="id" value="${ row.ID }">
-                            <strong>Request edit</strong>
-                            <br><br>
-                            <table>
-                                <tr>
-                                    <td><label for="edit-reason">Reason: </label></td>
-                                    <td><input type="text" id="edit-reason" name="reason" style="width: 400px;" placeholder="Incorrect tags, inappropriate description..."></td>
-                                </tr>
-                            </table>
-                            <input type="submit" value="Request" disabled/>
-                        </form>
-                        <form action="/request_delete" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
-                            <input type="hidden" name="id" value="${ row.ID }">
-                            <strong>Request deletion</strong>
-                            <br><br>
-                            <table>
-                                <tr>
-                                    <td><label for="delete-reason">Reason: </label></td>
-                                    <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, broken..."></td>
-                                </tr>
-                            </table>
-                            <input type="submit" value="Request" disabled/>
-                        </form>
-                    `));
+                    res.end(fs.readFileSync("SPA.html", "utf8").replace(
+                        "<!-- insert -->",
+                        fs.readFileSync("imagepage_widget.html", "utf8")
+                            .replace("FILENAME", row.Filename)
+                            .replaceAll("ID", row.ID)
+                            .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
+                    ));
                 } else {
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Not Found");
