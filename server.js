@@ -15,7 +15,7 @@ db.serialize(() => {
             db.run(`
                     CREATE TABLE Images
                     (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT, Description TEXT, Tags TEXT,
-                    CreationUnixTimestamp INTEGER, DeleteRequest TEXT, RetagRequest TEXT);
+                    CreationUnixTimestamp INTEGER, EditRequest TEXT, DeleteRequest TEXT);
             `);
         }
     });
@@ -205,6 +205,18 @@ const endpoints = [
                             </table>
                             <input type="submit" value="Delete"/>
                         </form>
+                        <form action="/request_edit" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
+                            <input type="hidden" name="id" value="${ row.ID }">
+                            <strong>Request edit</strong>
+                            <br><br>
+                            <table>
+                                <tr>
+                                    <td><label for="edit-reason">Reason: </label></td>
+                                    <td><input type="text" id="edit-reason" name="reason" style="width: 400px;" placeholder="Incorrect tags, inappropriate description..."></td>
+                                </tr>
+                            </table>
+                            <input type="submit" value="Request" disabled/>
+                        </form>
                         <form action="/request_delete" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
                             <input type="hidden" name="id" value="${ row.ID }">
                             <strong>Request deletion</strong>
@@ -213,18 +225,6 @@ const endpoints = [
                                 <tr>
                                     <td><label for="delete-reason">Reason: </label></td>
                                     <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, broken..."></td>
-                                </tr>
-                            </table>
-                            <input type="submit" value="Request" disabled/>
-                        </form>
-                        <form action="/request_retag" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
-                            <input type="hidden" name="id" value="${ row.ID }">
-                            <strong>Request retag</strong>
-                            <br><br>
-                            <table>
-                                <tr>
-                                    <td><label for="retag-reason">Reason: </label></td>
-                                    <td><input type="text" id="retag-reason" name="reason" style="width: 400px;"></td>
                                 </tr>
                             </table>
                             <input type="submit" value="Request" disabled/>
