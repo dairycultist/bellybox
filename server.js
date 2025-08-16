@@ -29,7 +29,7 @@ const admincode = "ABC";
 const endpoints = [
     // index
     {
-        regex: new RegExp("^GET /$"),
+        regex: new RegExp("^GET /\\\??$"),
         respond: (req, res) => {
 
             let images = "<div style='display: flex; flex-wrap: wrap;'>";
@@ -48,6 +48,19 @@ const endpoints = [
                 res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
                 res.end(fs.readFileSync("SPA.html", "utf8").replace("<!-- insert -->", images));
             });
+        }
+    },
+    // index + tag search
+    {
+        regex: new RegExp("^GET /\\\?tag="),
+        respond: (req, res) => {
+
+            const searchTags = req.url.split("?tag=", 2)[1].split("&tag=");
+
+            console.log(searchTags);
+
+            // TEMP load index
+            endpoints[0].respond(req, res);
         }
     },
     // fetching an image file
