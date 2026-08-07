@@ -19,16 +19,28 @@ db.serialize(() => {
     });
 });
 
+const tags = [
+    { internal: "humanoid", display: "Humanoid" },
+    { internal: "furry", display: "Furry" },
+    { internal: "loli", display: "Deburori" }
+];
+
 function getSPA(insert) {
 
     const getTagInputHTML = (idUniquifier) => {
 
-        return `
-            <input type="checkbox" name="tag" id="humanoid_${ idUniquifier }" value="humanoid">
-            <label for="humanoid_${ idUniquifier }"> Humanoid</label><br>
-            <input type="checkbox" name="tag" id="furry_${ idUniquifier }" value="furry">
-            <label for="furry_${ idUniquifier }"> Furry</label><br>
-        `;
+        let construct = "";
+
+        for (const tag of tags) {
+
+            construct += `
+                <input type="checkbox" name="tag" id="${ tag.internal }_${ idUniquifier }" value="${ tag.internal }">
+                <label for="${ tag.internal }_${ idUniquifier }"> ${ tag.display }</label>
+                <br>
+            `;
+        }
+
+        return construct;
     };
 
     return fs.readFileSync("SPA.html", "utf8")
@@ -68,13 +80,16 @@ createServer((req, res) => {
     const requested_endpoint = req.method + " " + req.url;
     console.log(requested_endpoint);
 
-    // match endpoints
-    for (const endpoint of endpoints) {
+    if (!requested_endpoint.includes("..")) {
 
-        if (endpoint.regex.test(requested_endpoint)) {
+        // match endpoints
+        for (const endpoint of endpoints) {
 
-            endpoint.respond(getSPA, db, req, res);
-            return;
+            if (endpoint.regex.test(requested_endpoint)) {
+
+                endpoint.respond(getSPA, db, req, res);
+                return;
+            }
         }
     }
 

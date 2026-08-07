@@ -3,7 +3,7 @@ const fs = require("fs");
 module.exports = [
     // fetching an image file
     {
-        regex: new RegExp("^GET /img/"),
+        regex: new RegExp("^GET /img/|^GET /res/"),
         respond: (getSPA, db, req, res) => {
 
             try {
