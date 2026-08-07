@@ -2,14 +2,20 @@
 
 A lightweight, open-source booru software specifically for **drawings of fat women**. Client need not Javascript! 
 
-**Feature plan:**
-[ ] description
-[ ] pagination
-[ ] request deletion
-[ ] request edit
-[ ] config with port, hostname, postcode, admincode, and array of accepted tags (which is used to generate tag input html)
-[ ] thumbnail saving (ID_thumb.png, much smaller)
-[ ] regular, automatic backups
+## Features
+
+[x] Image uploading
+- TODO ensure ID collisions are impossible with a db query
+[x] Image viewing (search page and dedicated page)
+[x] Tagging images (with preset tags loaded from `config.json`)
+[ ] Giving descriptions to images
+[x] Searching by tag
+[x] Searching by description substring (good for searching by author or specific content not covered by tags)
+[ ] Pagination
+[ ] Request deletion
+[ ] Request edit
+[ ] Thumbnail saving (ID_thumb.png, much smaller)
+[ ] Regular, automatic backups
 
 No forum/commenting planned, since moderating images is enough work for me already.
 

@@ -19,19 +19,13 @@ db.serialize(() => {
     });
 });
 
-const tags = [
-    { internal: "humanoid", display: "Humanoid" },
-    { internal: "furry", display: "Furry" },
-    { internal: "loli", display: "Deburori" }
-];
-
 function getSPA(insert) {
 
     const getTagInputHTML = (idUniquifier) => {
 
         let construct = "";
 
-        for (const tag of tags) {
+        for (const tag of require("./config.json").tags) {
 
             construct += `
                 <input type="checkbox" name="tag" id="${ tag.internal }_${ idUniquifier }" value="${ tag.internal }">

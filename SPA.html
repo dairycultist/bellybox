@@ -10,33 +10,37 @@
         h1 a { color: white; }
         form { border: 1px solid #5a96c9; background: #dbeaf0; padding: 1em; max-width: 30em; margin: 1em 0; }
         th { text-align: left; padding-right: 1em; }
-        p {color: #aab; }
+        p {color: #88a; }
+        summary { background: white; font-weight: 700; border: 1px solid #5a96c9; border-bottom: 0; background: #dbeaf0; padding: 1em; }
+        details form { margin-top: 0; }
     </style>
 </head>
 <body>
     
-    <div style="flex: 0; width: 300px;">
+    <div style="flex: 0 0 300px; width: 300px;">
 
         <h1><a href="/">bellybox</a></h1>
 
-        <form action="/post_image" method="post" enctype="multipart/form-data">
+        <details>
+            <summary>Upload</summary>
+            <form action="/post_image" method="post" enctype="multipart/form-data">
 
-            <strong>Upload</strong>
-            <br><br>
+                <p>Bellybox is a booru for drawings of fat women. Please do not upload thin women, men, excessive slob, gore, or illegal content.</p>
 
-            <table>
-                <tr>
-                    <td><label for="image">Image: </label></td>
-                    <td><input type="file" id="image" name="image" accept="image/*"></td>
-                </tr>
-            </table>
+                <table>
+                    <tr>
+                        <td><label for="image">Image: </label></td>
+                        <td><input type="file" id="image" name="image" accept="image/*"></td>
+                    </tr>
+                </table>
 
-            <!-- tags -->
+                <!-- tags -->
 
-            <br>
-            <input type="submit" value="Upload"/>
+                <br>
+                <input type="submit" value="Upload"/>
 
-        </form>
+            </form>
+        </details>
 
         <form action="/">
 
