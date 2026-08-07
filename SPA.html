@@ -10,6 +10,7 @@
         h1 a { color: white; }
         form { border: 1px solid #5a96c9; background: #dbeaf0; padding: 1em; max-width: 30em; margin: 1em 0; }
         th { text-align: left; padding-right: 1em; }
+        p {color: #aab; }
     </style>
 </head>
 <body>
@@ -20,14 +21,10 @@
 
         <form action="/post_image" method="post" enctype="multipart/form-data">
 
-            <strong>Single upload</strong> <a href=""><small><i>do multiple instead</i></small></a>
+            <strong>Upload</strong>
             <br><br>
 
             <table>
-                <tr>
-                    <td><label for="postcode">Postcode: </label></td>
-                    <td><input type="password" id="postcode" name="postcode"></td>
-                </tr>
                 <tr>
                     <td><label for="image">Image: </label></td>
                     <td><input type="file" id="image" name="image" accept="image/*"></td>
@@ -43,13 +40,13 @@
 
         <form action="/">
 
-            <strong>Search with filter</strong>
-            <br><br>
+            <strong>Filter</strong>
+            <p>Only images that match every selected tag will be shown.</p>
 
             <!-- tags -->
 
             <br>
-            <input type="submit" value="Search"/>
+            <input type="submit" value="Filter"/>
 
         </form>
 

@@ -41,8 +41,6 @@ function getSPA(insert) {
 
 const port = 3000;
 const hostname = "127.0.0.1";
-const postcode = "ABC";
-const admincode = "ABC";
 
 const endpoints = [
     // index
@@ -120,12 +118,7 @@ const endpoints = [
 
                 const image = files.image[0];
 
-                if (fields.postcode != postcode) {
-
-                    res.writeHead(401, { "Content-Type": "text/plain" });
-                    res.end("401 Unauthorized (Invalid Postcode)");
-
-                } else if (image.size == 0) {
+                if (image.size == 0) {
 
                     res.writeHead(400, { "Content-Type": "text/plain" });
                     res.end("400 Bad Request (Must Attach File)");
@@ -164,51 +157,51 @@ const endpoints = [
             });
         }
     },
-    // delete an image
-    {
-        regex: new RegExp("^POST /force_delete"),
-        respond: (req, res) => {
+    // // delete an image (this is just gonna be a server-side command instead of working through the UI)
+    // {
+    //     regex: new RegExp("^POST /force_delete"),
+    //     respond: (req, res) => {
 
-            new multiparty.Form().parse(req, function(err, fields, files) {
+    //         new multiparty.Form().parse(req, function(err, fields, files) {
 
-                if (err) {
+    //             if (err) {
 
-                    res.writeHead(400, { "Content-Type": "text/plain" });
-                    res.end("400 Could not parse request");
-                    return;
-                }
+    //                 res.writeHead(400, { "Content-Type": "text/plain" });
+    //                 res.end("400 Could not parse request");
+    //                 return;
+    //             }
 
-                if (fields.admincode != admincode) {
+    //             if (fields.admincode != admincode) {
 
-                    res.writeHead(401, { "Content-Type": "text/plain" });
-                    res.end("401 Unauthorized (Invalid Admincode)");
-                    return;
-                }
+    //                 res.writeHead(401, { "Content-Type": "text/plain" });
+    //                 res.end("401 Unauthorized (Invalid Admincode)");
+    //                 return;
+    //             }
 
-                db.get(`SELECT Filename FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
+    //             db.get(`SELECT Filename FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
 
-                    // ensure DB entry exists for this ID
-                    if (!row) {
+    //                 // ensure DB entry exists for this ID
+    //                 if (!row) {
 
-                        res.writeHead(404, { "Content-Type": "text/plain" });
-                        res.end("404 Not Found");
-                        return;
-                    }
+    //                     res.writeHead(404, { "Content-Type": "text/plain" });
+    //                     res.end("404 Not Found");
+    //                     return;
+    //                 }
 
-                    // delete entry
-                    db.run(`DELETE FROM Images WHERE ID = "${ fields.id }"`);
+    //                 // delete entry
+    //                 db.run(`DELETE FROM Images WHERE ID = "${ fields.id }"`);
 
-                    // delete file
-                    if (fs.existsSync("img/" + row.Filename)) {
-                        fs.unlinkSync("img/" + row.Filename);
-                    }
+    //                 // delete file
+    //                 if (fs.existsSync("img/" + row.Filename)) {
+    //                     fs.unlinkSync("img/" + row.Filename);
+    //                 }
 
-                    // load index
-                    endpoints[0].respond(req, res);
-                });
-            });
-        }
-    },
+    //                 // load index
+    //                 endpoints[0].respond(req, res);
+    //             });
+    //         });
+    //     }
+    // },
     // dedicated page for an image
     {
         regex: new RegExp("^GET /image/"),
