@@ -6,7 +6,7 @@ module.exports = [
     // index (potentially including tag search and page)
     {
         regex: new RegExp("^GET /(\\\?.*)?$"),
-        respond: (respondImagePage, getSPA, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, db, query, req, res) => {
 
             const tags = query.getAll("tag");
 
@@ -47,14 +47,14 @@ module.exports = [
                 }, () => {
                     
                     // respond on complete
-                    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-                    res.end(
-                        getSPA(fs.readFileSync("pagenav_widget.html", "utf8") + images)
-                        .replaceAll("<!-- total result items -->", count)
-                        .replaceAll("<!-- page index -->", pageIndex)
-                        .replaceAll("<!-- page total -->", pageTotal)
-                        .replaceAll("PREV_PAGE_HREF", pageIndex == 1         ? "" : `href="?page=${ pageIndex - 1 }${ tagQuery }"`)
-                        .replaceAll("NEXT_PAGE_HREF", pageIndex == pageTotal ? "" : `href="?page=${ pageIndex + 1 }${ tagQuery }"`)
+                    respondSPA(res,
+                        fs.readFileSync("pagenav_widget.html", "utf8")
+                            .replaceAll("<!-- total result items -->", count)
+                            .replaceAll("<!-- page index -->", pageIndex)
+                            .replaceAll("<!-- page total -->", pageTotal)
+                            .replaceAll("PREV_PAGE_HREF", pageIndex == 1         ? "" : `href="?page=${ pageIndex - 1 }${ tagQuery }"`)
+                            .replaceAll("NEXT_PAGE_HREF", pageIndex == pageTotal ? "" : `href="?page=${ pageIndex + 1 }${ tagQuery }"`)
+                        + images
                     );
                 });
             });

@@ -25,8 +25,7 @@ function respondImagePage(res, id) {
 
         if (row) {
 
-            res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-            res.end(getSPA(
+            respondSPA(res,
                 fs.readFileSync("imagepage_widget.html", "utf8")
                     .replace("FILENAME", row.Filename)
                     .replaceAll("ID", row.ID)
@@ -54,7 +53,7 @@ function respondImagePage(res, id) {
                         return displayTags;
                     })())
                     .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
-            ));
+            );
         } else {
             res.writeHead(404, { "Content-Type": "text/plain" });
             res.end("404 Not Found");
@@ -62,7 +61,7 @@ function respondImagePage(res, id) {
     });
 }
 
-function getSPA(insert) {
+function respondSPA(res, insert) {
 
     const getTagInputHTML = (idUniquifier) => {
 
@@ -80,10 +79,13 @@ function getSPA(insert) {
         return construct;
     };
 
-    return fs.readFileSync("SPA.html", "utf8")
-        .replace("<!-- insert -->", insert)
-        .replace("<!-- tags -->", getTagInputHTML("upload"))
-        .replace("<!-- tags -->", getTagInputHTML("filter"));
+    res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+    res.end(
+        fs.readFileSync("SPA.html", "utf8")
+            .replace("<!-- insert -->", insert)
+            .replace("<!-- tags -->", getTagInputHTML("upload"))
+            .replace("<!-- tags -->", getTagInputHTML("filter"))
+    );
 }
 
 const port = 3000;
@@ -124,7 +126,7 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requested_endpoint)) {
 
-                endpoint.respond(respondImagePage, getSPA, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                endpoint.respond(respondImagePage, respondSPA, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
                 return;
             }
         }
