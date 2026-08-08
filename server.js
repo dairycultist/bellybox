@@ -4,6 +4,9 @@ const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("db");
 
+if (!fs.existsSync("./img"))
+    fs.mkdir("./img", "0777", (err) => {});
+
 db.serialize(() => {
 
     db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Images';", (err, row) => {
@@ -12,7 +15,7 @@ db.serialize(() => {
         if (!row) {
             db.run(`
                     CREATE TABLE Images
-                    (ID TEXT, Filename TEXT, Description TEXT, Tags TEXT,
+                    (FileType TEXT, Description TEXT, Tags TEXT,
                     CreationUnixTimestamp INTEGER, EditRequest TEXT, DeleteRequest TEXT);
             `);
         }
@@ -21,14 +24,14 @@ db.serialize(() => {
 
 function respondImagePage(res, id) {
 
-    db.get(`SELECT ID, Filename, Description, Tags, CreationUnixTimestamp FROM Images WHERE ID = "${ id }";`, (err, row) => {
+    db.get(`SELECT FileType, Description, Tags, CreationUnixTimestamp FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
 
         if (row) {
 
             respondSPA(res,
                 fs.readFileSync("imagepage_widget.html", "utf8")
-                    .replace("FILENAME", row.Filename)
-                    .replaceAll("ID", row.ID)
+                    .replace("FILENAME", id + "." + row.FileType)
+                    .replaceAll("ID", id)
                     .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
                     .replace("TAGS", row.Tags.length == 0 ? "∅" : (() => {
 
@@ -162,7 +165,7 @@ createServer((req, res) => {
 //                 return;
 //             }
 
-//             db.get(`SELECT Filename FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
+//             db.get(`SELECT FileType FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
 
 //                 // ensure DB entry exists for this ID
 //                 if (!row) {
@@ -176,8 +179,8 @@ createServer((req, res) => {
 //                 db.run(`DELETE FROM Images WHERE ID = "${ fields.id }"`);
 
 //                 // delete file
-//                 if (fs.existsSync("img/" + row.Filename)) {
-//                     fs.unlinkSync("img/" + row.Filename);
+//                 if (fs.existsSync("img/" + row.FileType)) {
+//                     fs.unlinkSync("img/" + row.FileType);
 //                 }
 
 //                 // load index

@@ -19,33 +19,32 @@ module.exports = [
 
                 } else {
 
-                    console.log(`Recieved image ${ image.originalFilename } of size ${ image.size }b`);
+                    console.log(`Received image ${ image.originalFilename } of size ${ image.size }b`);
 
-                    // generate unique Base62 id for this image
-                    let id = "";
-                    let index = Math.floor(Math.random() * 999999999999); // TODO switch to sequential id system to prevent collisions
+                    // // to base62
+                    // do {
+                    //     id ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.charAt(index % 62) + id;
+                    //     index = Math.floor(index / 62);
+                    // } while (index > 0);
 
-                    do {
-                        id ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.charAt(index % 62) + id;
-                        index = Math.floor(index / 62);
-                    } while (index > 0);
-
-                    const filename = id + "." + image.originalFilename.split(".").at(-1);
-                    const filepath = "img/" + filename;
+                    const fileType = image.originalFilename.split(".").at(-1);
 
                     // get image size (for masonry)
                     imageSizeFromFile(image.path).then((image_size) => {
 
-                        // rename downloaded image to filename based on unique id
-                        fs.rename(image.path, filepath, (err) => {});
-
                         // add database entry
-                        db.run(`
-                            INSERT INTO Images VALUES ("${ id }", "${ filename }", "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");
-                        `);
+                        db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");`,
+                            function(err) {
 
-                        // respond with new image's page
-                        respondImagePage(res, id);
+                                const rowid = "" + this.lastID;
+
+                                // rename downloaded image based on unique rowid
+                                fs.rename(image.path, "img/" + rowid + "." + fileType, (err) => {});
+
+                                // respond with new image's page
+                                respondImagePage(res, rowid);
+                            }
+                        );
                     });
                 }
             });
