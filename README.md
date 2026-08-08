@@ -4,10 +4,10 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 
 ## Features
 
-- [x] Image uploading without id collisions
+- [x] Image uploading (that gets sanitized!) without id collisions
 - [x] Image viewing (search page and dedicated page)
 - [x] Tagging images (with preset tags loaded from `config.json`)
-- [ ] Giving descriptions to images
+- [x] Giving descriptions to images (that get sanitized!)
 - [x] Searching by tag
 - [ ] Searching by description substring (good for searching by author or specific content not covered by tags)
 - [x] Pagination
@@ -25,7 +25,7 @@ No forum/commenting planned, since moderating images is enough work for me alrea
 ```
 npm install sqlite3
 npm install multiparty
-npm install image-size
+npm install jimp
 ```
 
 https://www.npmjs.com/package/multiparty

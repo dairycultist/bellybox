@@ -62,6 +62,8 @@ function respondImagePage(res, id) {
             res.end("404 Not Found");
         }
     });
+
+    console.log("Response: Image page " + id);
 }
 
 function respondSPA(res, insert) {
@@ -90,12 +92,16 @@ function respondSPA(res, insert) {
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))
     );
+
+    console.log("Response: SPA");
 }
 
 function respondError(res, code, message) {
 
     res.writeHead(code, { "Content-Type": "text/plain" });
-    res.end(message);
+    res.end(code + " " + message);
+
+    console.log("Response: " + code + " " + message);
 }
 
 const port = 3000;

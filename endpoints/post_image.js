@@ -1,6 +1,6 @@
 const fs = require("fs");
 const multiparty = require("multiparty");
-const { imageSizeFromFile } = require("image-size/fromFile");
+const { Jimp } = require("jimp");
 
 // we could convert all the rowids to base62 for the url, but it's not really that important
 // do {
@@ -26,30 +26,49 @@ module.exports = [
 
                     console.log(`Received image ${ image.originalFilename } of size ${ image.size }b`);
 
+                    if (image.size > 1000000000) { // 1GB
+
+                        respondError(res, 400, "Image too large! Maximum upload size 1GB.");
+                        return;
+                    }
+
                     const fileType = image.originalFilename.split(".").at(-1);
 
-                    // get image size (for masonry)
-                    imageSizeFromFile(image.path).then((image_size) => {
+                    // add database entry
+                    db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "");`,
+                        async function(err) {
 
-                        // add database entry
-                        db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "");`,
-                            function(err) {
+                            if (err) {
+                                console.log(err);
+                                respondError(res, 300, "Server messed up");
+                            }
 
-                                if (err) {
-                                    console.log(err);
-                                    respondError(res, 300, "Server messed up");
-                                }
+                            const rowid = "" + this.lastID;
 
-                                const rowid = "" + this.lastID;
+                            try {
 
-                                // rename downloaded image based on unique rowid
-                                fs.rename(image.path, "img/" + rowid + "." + fileType, (err) => {});
+                                // sanitize uploaded image (check if it's even an image, and copy over
+                                // JUST graphics, ignoring metadata or other stuff)
+                                const uploadedImage = await Jimp.read(image.path);
+                                const sanitizedImage = await new Jimp({ width: uploadedImage.bitmap.width, height: uploadedImage.bitmap.height });
+
+                                sanitizedImage.blit(uploadedImage, 0, 0);
+
+                                // save as png based on unique rowid
+                                await sanitizedImage.write("img/" + rowid + "." + fileType);
+
+                                // delete temp image
+                                fs.unlink(image.path, () => {});
 
                                 // respond with new image's page
                                 respondImagePage(res, rowid);
+
+                            } catch (e) {
+
+                                respondError(res, 400, "Invalid input!");
                             }
-                        );
-                    });
+                        }
+                    );
                 }
             });
         }
