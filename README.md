@@ -16,6 +16,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [ ] Request edit
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
 - [ ] Regular, automatic backups
+- [ ] Security (rate limiting, prevent non-image uploads, prevent crashes from input fudging)
 
 No forum/commenting planned, since moderating images is enough work for me already.
 

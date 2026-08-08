@@ -124,7 +124,7 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requested_endpoint)) {
 
-                endpoint.respond(respondImagePage, getSPA, db, req, res);
+                endpoint.respond(respondImagePage, getSPA, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
                 return;
             }
         }

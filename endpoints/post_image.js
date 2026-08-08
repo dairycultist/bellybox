@@ -6,7 +6,7 @@ module.exports = [
     // posting an image to the booru
     {
         regex: new RegExp("^POST /post_image"),
-        respond: (respondImagePage, getSPA, db, req, res) => {
+        respond: (respondImagePage, getSPA, db, query, req, res) => {
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
