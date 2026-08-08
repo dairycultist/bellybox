@@ -16,6 +16,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [ ] Regular, automatic backups
 - [ ] IP rate limiting
 - [ ] Prevent crashes from input fudging
+- [ ] Prevent crashes from not handling `err` outputs
 - [x] "Console mode" (by passing `--console` command line argument) that lets you do moderator stuff
 - [ ] Automatic launcher script that also initiates a program that puts the server back up if it goes down...
 

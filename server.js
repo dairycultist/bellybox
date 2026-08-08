@@ -26,16 +26,44 @@ if (process.argv.includes("--console")) {
 
     console.log("ENTERING CONSOLE MODE! SERVER IS NOT LAUNCHING.");
 
+    console.log("logs - print logs (edit/delete requests) associated with every image (that has logs)");
+    console.log("delete <id> - deletes the image with the given id from the database");
     const choice = require("readline-sync").question(">");
 
-    console.log("Printing all images with non-empty InfoLogs...");
+    if (choice == "logs") {
 
-    db.each(`SELECT rowid, InfoLog FROM Images WHERE InfoLog != "";`, (err, row) => {
+        console.log("Printing all images with non-empty InfoLogs...");
 
-        console.log("\nid>>>" + row.rowid);
-        console.log(row.InfoLog);
+        db.each(`SELECT rowid, InfoLog FROM Images WHERE InfoLog != "";`, (err, row) => {
 
-    }, () => {});
+            console.log("\nid>>>" + row.rowid);
+            console.log(row.InfoLog);
+
+        }, () => {});
+
+    } else if (choice.startsWith("delete")) {
+
+        const rowid = choice.split(" ")[1];
+
+        db.get(`SELECT FileType FROM Images WHERE ROWID = "${ rowid }";`, (err, row) => {
+
+            // ensure row exists with this rowid
+            if (!row) {
+
+                console.log("No row with rowid=" + rowid + " exists.");
+                return;
+            }
+
+            // delete row
+            db.run(`DELETE FROM Images WHERE ROWID = "${ rowid }"`);
+
+            // delete file
+            if (fs.existsSync("img/" + rowid + "." + row.FileType))
+                fs.unlinkSync("img/" + rowid + "." + row.FileType);
+
+            console.log("Successfully deleted " + rowid + ".");
+        });
+    }
 
     return;
 }
@@ -171,52 +199,3 @@ createServer((req, res) => {
     res.end("400 Bad Endpoint\n" + requestedEndpoint);
 
 }).listen(port, hostname, () => console.log(`Starting @ http://${ hostname }:${ port }/`));
-
-
-
-
-// // delete an image (this is just gonna be a server-side command instead of working through the UI)
-// {
-//     regex: new RegExp("^POST /force_delete"),
-//     respond: (req, res) => {
-
-//         new multiparty.Form().parse(req, function(err, fields, files) {
-
-//             if (err) {
-
-//                 res.writeHead(400, { "Content-Type": "text/plain" });
-//                 res.end("400 Could not parse request");
-//                 return;
-//             }
-
-//             if (fields.admincode != admincode) {
-
-//                 res.writeHead(401, { "Content-Type": "text/plain" });
-//                 res.end("401 Unauthorized (Invalid Admincode)");
-//                 return;
-//             }
-
-//             db.get(`SELECT FileType FROM Images WHERE ID = "${ fields.id }";`, (err, row) => {
-
-//                 // ensure DB entry exists for this ID
-//                 if (!row) {
-
-//                     res.writeHead(404, { "Content-Type": "text/plain" });
-//                     res.end("404 Not Found");
-//                     return;
-//                 }
-
-//                 // delete entry
-//                 db.run(`DELETE FROM Images WHERE ID = "${ fields.id }"`);
-
-//                 // delete file
-//                 if (fs.existsSync("img/" + row.FileType)) {
-//                     fs.unlinkSync("img/" + row.FileType);
-//                 }
-
-//                 // load index
-//                 endpoints[0].respond(req, res);
-//             });
-//         });
-//     }
-// },
