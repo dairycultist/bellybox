@@ -72,6 +72,7 @@ function respondSPA(res, insert) {
 
         for (const tag of require("./config.json").tags) {
 
+            // TODO "checked" attribute on filter tags that are selected
             construct += `
                 <input type="checkbox" name="tag" id="${ tag.internal }_${ idUniquifier }" value="${ tag.internal }">
                 <label for="${ tag.internal }_${ idUniquifier }">${ tag.icon ? `<img src="${ tag.icon }" style="vertical-align: middle; height: 30px;">` : "" } ${ tag.display }</label>
@@ -92,7 +93,7 @@ function respondSPA(res, insert) {
 }
 
 function respondError(res, code, message) {
-    
+
     res.writeHead(code, { "Content-Type": "text/plain" });
     res.end(message);
 }
