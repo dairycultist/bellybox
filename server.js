@@ -29,7 +29,7 @@ function getSPA(insert) {
 
             construct += `
                 <input type="checkbox" name="tag" id="${ tag.internal }_${ idUniquifier }" value="${ tag.internal }">
-                <label for="${ tag.internal }_${ idUniquifier }"> ${ tag.display }</label>
+                <label for="${ tag.internal }_${ idUniquifier }">${ tag.icon ? `<img src="${ tag.icon }" style="vertical-align: middle; height: 30px;">` : "" } ${ tag.display }</label>
                 <br>
             `;
         }

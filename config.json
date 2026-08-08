@@ -4,12 +4,12 @@
         { "internal": "kemono", "display": "Kemono (human with animal features)" },
         { "internal": "furry", "display": "Furry" },
         { "internal": "loli", "display": "Loli/Deburori" },
-        { "internal": "size_1", "display": "<img src='/res/size_1.png' style='vertical-align: middle; height: 30px;'> Barely fat" },
-        { "internal": "size_2", "display": "<img src='/res/size_2.png' style='vertical-align: middle; height: 30px;'> Hefty" },
-        { "internal": "size_3", "display": "<img src='/res/size_3.png' style='vertical-align: middle; height: 30px;'> Immobile" },
-        { "internal": "clothed", "display": "Fully clothed" },
-        { "internal": "clothed_scantily", "display": "Scantily clothed" },
-        { "internal": "nude_partial", "display": "Partially nude" },
-        { "internal": "nude", "display": "Fully nude" }
+        { "internal": "size_1", "display": "Barely fat", "icon": "/res/size_1.png" },
+        { "internal": "size_2", "display": "Hefty", "icon": "/res/size_2.png" },
+        { "internal": "size_3", "display": "Immobile", "icon": "/res/size_3.png" },
+        { "internal": "clothed", "display": "Fully clothed", "icon": "/res/clothed_1.png" },
+        { "internal": "clothed_scantily", "display": "Scantily clothed", "icon": "/res/clothed_2.png" },
+        { "internal": "nude_partial", "display": "Partially nude", "icon": "/res/clothed_3.png" },
+        { "internal": "nude", "display": "Fully nude", "icon": "/res/clothed_4.png" }
     ]
 }
