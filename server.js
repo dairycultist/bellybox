@@ -25,46 +25,22 @@ db.serialize(() => {
 if (process.argv.includes("--console")) {
 
     console.log("ENTERING CONSOLE MODE! SERVER IS NOT LAUNCHING.");
+    console.log();
+    for (const file of fs.readdirSync("./commands/"))
+        console.log(require("./commands/" + file).helptext);
+    console.log();
 
-    console.log("logs - print logs (edit/delete requests) associated with every image (that has logs)");
-    console.log("delete <id> - deletes the image with the given id from the database");
     const choice = require("readline-sync").question(">");
+    console.log();
 
-    if (choice == "logs") {
+    for (const file of fs.readdirSync("./commands/")) {
 
-        console.log("Printing all images with non-empty InfoLogs...");
+        if (choice.startsWith(require("./commands/" + file).command)) {
 
-        db.each(`SELECT rowid, InfoLog FROM Images WHERE InfoLog != "";`, (err, row) => {
-
-            console.log("\nid>>>" + row.rowid);
-            console.log(row.InfoLog);
-
-        }, () => {});
-
-    } else if (choice.startsWith("delete")) {
-
-        const rowid = choice.split(" ")[1];
-
-        db.get(`SELECT FileType FROM Images WHERE ROWID = "${ rowid }";`, (err, row) => {
-
-            // ensure row exists with this rowid
-            if (!row) {
-
-                console.log("No row with rowid=" + rowid + " exists.");
-                return;
-            }
-
-            // delete row
-            db.run(`DELETE FROM Images WHERE ROWID = "${ rowid }"`);
-
-            // delete file
-            if (fs.existsSync("img/" + rowid + "." + row.FileType))
-                fs.unlinkSync("img/" + rowid + "." + row.FileType);
-
-            console.log("Successfully deleted " + rowid + ".");
-        });
+            require("./commands/" + file).run(db, choice.split(" "));
+        }
     }
-
+    
     return;
 }
 
@@ -158,9 +134,8 @@ const endpoints = (() => {
     try {
 
         const endpointHandlers = [];
-        const endpointFiles = fs.readdirSync("./endpoints/");
 
-        for (const file of endpointFiles) {
+        for (const file of fs.readdirSync("./endpoints/")) {
 
             console.log("Endpoint: " + file);
 
