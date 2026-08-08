@@ -11,8 +11,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [x] Searching by tag
 - [ ] Searching by description substring (good for searching by author or specific content not covered by tags)
 - [x] Pagination
-- [ ] Request deletion
-- [ ] Request edit
+- [x] Request edit/deletion
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
 - [ ] Regular, automatic backups
 - [ ] IP rate limiting
