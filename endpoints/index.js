@@ -1,12 +1,10 @@
 const fs = require("fs");
 
-const itemsPerPage = 2;
-
 module.exports = [
     // index (potentially including tag search and page)
     {
         regex: new RegExp("^GET /(\\\?.*)?$"),
-        respond: (respondImagePage, respondSPA, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
 
             const tags = query.getAll("tag");
 
@@ -21,6 +19,8 @@ module.exports = [
 
                 return construct;
             })();
+
+            const itemsPerPage = require("../config.json").itemsPerPage;
 
             db.get(`SELECT COUNT(*) AS count FROM Images${ tagWhere }`, (err, count) => {
 

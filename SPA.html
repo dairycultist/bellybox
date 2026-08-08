@@ -9,20 +9,35 @@
         a:not([href]) { color: grey; }
         h1 { text-align: center; }
         h1 a { color: white; }
-        form { border: 1px solid #5a96c9; background: #dbeaf0; padding: 1em; max-width: 30em; margin: 1em 0; }
+        form { border: 1px solid #5a96c9; background: #dbeaf0; padding: 1em; margin: 1em 0; }
         th { text-align: left; padding-right: 1em; }
         p {color: #88a; }
-        summary { background: white; font-weight: 700; border: 1px solid #5a96c9; border-bottom: 0; background: #dbeaf0; padding: 1em; }
+        summary { color: white; font-weight: 700; padding: 0 1em 1em 1em; cursor: pointer; }
         details form { margin-top: 0; }
         .galleryitem img { height: 200px; }
     </style>
 </head>
 <body>
-    
+
     <div style="flex: 0 0 300px; width: 300px;">
 
         <h1><a href="/">bellybox</a></h1>
 
+        <form action="/">
+
+            <strong>Filter</strong>
+            <p>Only images that match every selected tag will be shown.</p>
+
+            <!-- tags -->
+
+            <br>
+            <input type="submit" value="Filter"/>
+
+        </form>
+
+    </div>
+
+    <div style="flex: 1;">
         <details>
             <summary>Upload</summary>
             <form action="/post_image" method="post" enctype="multipart/form-data">
@@ -44,23 +59,10 @@
             </form>
         </details>
 
-        <form action="/">
-
-            <strong>Filter</strong>
-            <p>Only images that match every selected tag will be shown.</p>
-
-            <!-- tags -->
-
-            <br>
-            <input type="submit" value="Filter"/>
-
-        </form>
-
+        <div style="background: white; padding: 1em; border: 2px solid #5a96c9;">
+            <!-- insert -->
+        </div>
     </div>
-
-    <div style="flex: 1; background: white; padding: 1em; border: 2px solid #5a96c9;">
-        <!-- insert -->
-    </div>
-
+    
 </body>
 </html>

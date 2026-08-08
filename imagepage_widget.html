@@ -13,7 +13,7 @@
         <td>DESCRIPTION</td>
     </tr>
 </table>
-<form action="/request_edit" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
+<form action="/request_edit" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" value="ID">
     <strong>Request edit</strong>
     <br><br>
@@ -23,9 +23,9 @@
             <td><input type="text" id="edit-reason" name="reason" style="width: 400px;" placeholder="Incorrect tags, inappropriate description..."></td>
         </tr>
     </table>
-    <input type="submit" value="Request" disabled/>
+    <input type="submit" value="Request"/>
 </form>
-<form action="/request_delete" method="post" enctype="multipart/form-data" style="filter: opacity(30%);">
+<form action="/request_delete" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" value="ID">
     <strong>Request deletion</strong>
     <br><br>
@@ -35,5 +35,5 @@
             <td><input type="text" id="delete-reason" name="reason" style="width: 400px;" placeholder="Duplicate, inappropriate, broken..."></td>
         </tr>
     </table>
-    <input type="submit" value="Request" disabled/>
+    <input type="submit" value="Request"/>
 </form>

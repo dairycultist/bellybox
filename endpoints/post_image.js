@@ -6,7 +6,7 @@ module.exports = [
     // posting an image to the booru
     {
         regex: new RegExp("^POST /post_image"),
-        respond: (respondImagePage, respondSPA, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
@@ -14,8 +14,7 @@ module.exports = [
 
                 if (image.size == 0) {
 
-                    res.writeHead(400, { "Content-Type": "text/plain" });
-                    res.end("400 Bad Request (Must Attach File)");
+                    respondError(res, 400, "Bad Request (Must Attach File)");
 
                 } else {
 
@@ -33,8 +32,13 @@ module.exports = [
                     imageSizeFromFile(image.path).then((image_size) => {
 
                         // add database entry
-                        db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");`,
+                        db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "");`,
                             function(err) {
+
+                                if (err) {
+                                    console.log(err);
+                                    respondError(res, 300, "Server messed up");
+                                }
 
                                 const rowid = "" + this.lastID;
 

@@ -16,7 +16,7 @@ db.serialize(() => {
             db.run(`
                     CREATE TABLE Images
                     (FileType TEXT, Description TEXT, Tags TEXT,
-                    CreationUnixTimestamp INTEGER, EditRequest TEXT, DeleteRequest TEXT);
+                    CreationUnixTimestamp INTEGER, InfoLog TEXT);
             `);
         }
     });
@@ -91,6 +91,12 @@ function respondSPA(res, insert) {
     );
 }
 
+function respondError(res, code, message) {
+    
+    res.writeHead(code, { "Content-Type": "text/plain" });
+    res.end(message);
+}
+
 const port = 3000;
 const hostname = "127.0.0.1";
 
@@ -119,17 +125,17 @@ const endpoints = (() => {
 
 createServer((req, res) => {
 
-    const requested_endpoint = req.method + " " + req.url;
-    console.log(requested_endpoint);
+    const requestedEndpoint = req.method + " " + req.url;
+    console.log(requestedEndpoint);
 
-    if (!requested_endpoint.includes("..")) {
+    if (!requestedEndpoint.includes("..")) {
 
         // match endpoints
         for (const endpoint of endpoints) {
 
-            if (endpoint.regex.test(requested_endpoint)) {
+            if (endpoint.regex.test(requestedEndpoint)) {
 
-                endpoint.respond(respondImagePage, respondSPA, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                endpoint.respond(respondImagePage, respondSPA, respondError, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
                 return;
             }
         }
@@ -137,7 +143,7 @@ createServer((req, res) => {
 
     // return 400 if no endpoint matched
     res.writeHead(400, { "Content-Type": "text/plain" });
-    res.end("400 Bad Endpoint\n" + requested_endpoint);
+    res.end("400 Bad Endpoint\n" + requestedEndpoint);
 
 }).listen(port, hostname, () => console.log(`Starting @ http://${ hostname }:${ port }/`));
 
