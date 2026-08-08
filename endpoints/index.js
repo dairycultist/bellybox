@@ -8,9 +8,9 @@ module.exports = [
 
             let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-            db.each("SELECT ID, Filename, MasonryFlex FROM Images;", (err, row) => {
+            db.each("SELECT ID, Filename FROM Images;", (err, row) => {
 
-                images += `<a href="image/${ row.ID }" style="flex: ${ row.MasonryFlex } 1 ${ row.MasonryFlex }px; width: ${ row.MasonryFlex }px;"><img src="/img/${ row.Filename }" style="width: 100%;"></a>`;
+                images += `<a href="image/${ row.ID }" class="galleryitem"><img src="/img/${ row.Filename }"></a>`;
 
             }, () => {
 

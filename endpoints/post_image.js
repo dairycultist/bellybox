@@ -39,9 +39,9 @@ module.exports = [
                         // rename downloaded image to filename based on unique id
                         fs.rename(image.path, filepath, (err) => {});
 
-                        // add database entry (300 is the min row height)
+                        // add database entry
                         db.run(`
-                            INSERT INTO Images VALUES ("${ id }", "${ filename }", ${ 300 * image_size.width / image_size.height }, "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");
+                            INSERT INTO Images VALUES ("${ id }", "${ filename }", "${ "".trim() }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "", "");
                         `);
 
                         // respond with new image's page

@@ -12,7 +12,7 @@ db.serialize(() => {
         if (!row) {
             db.run(`
                     CREATE TABLE Images
-                    (ID TEXT, Filename TEXT, MasonryFlex UNSIGNED FLOAT, Description TEXT, Tags TEXT,
+                    (ID TEXT, Filename TEXT, Description TEXT, Tags TEXT,
                     CreationUnixTimestamp INTEGER, EditRequest TEXT, DeleteRequest TEXT);
             `);
         }
