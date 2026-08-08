@@ -22,6 +22,22 @@ db.serialize(() => {
     });
 });
 
+if (process.argv.includes("--console")) {
+
+    console.log("ENTERING CONSOLE MODE! SERVER IS NOT LAUNCHING.");
+
+    console.log("Printing all images with non-empty InfoLogs...");
+
+    db.each(`SELECT rowid, InfoLog FROM Images WHERE InfoLog != "";`, (err, row) => {
+
+        console.log("\nid>>>" + row.rowid);
+        console.log(row.InfoLog);
+
+    }, () => {});
+
+    return;
+}
+
 function respondImagePage(res, id) {
 
     db.get(`SELECT FileType, Description, Tags, CreationUnixTimestamp FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
