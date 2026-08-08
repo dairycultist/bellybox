@@ -4,7 +4,7 @@ module.exports = [
     // index
     {
         regex: new RegExp("^GET /\\\??$"),
-        respond: (getSPA, db, req, res) => {
+        respond: (respondImagePage, getSPA, db, req, res) => {
 
             let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
@@ -27,7 +27,7 @@ module.exports = [
     // index + tag search
     {
         regex: new RegExp("^GET /\\\?tag="),
-        respond: (getSPA, db, req, res) => {
+        respond: (respondImagePage, getSPA, db, req, res) => {
 
             const tagWhere = req.url.split("?tag=", 2)[1].split("&tag=").map(tag => `Tags LIKE "%${ tag }%"`).join(" AND ");
 

@@ -19,6 +19,49 @@ db.serialize(() => {
     });
 });
 
+function respondImagePage(res, id) {
+
+    db.get(`SELECT ID, Filename, Description, Tags, CreationUnixTimestamp FROM Images WHERE ID = "${ id }";`, (err, row) => {
+
+        if (row) {
+
+            res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+            res.end(getSPA(
+                fs.readFileSync("imagepage_widget.html", "utf8")
+                    .replace("FILENAME", row.Filename)
+                    .replaceAll("ID", row.ID)
+                    .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
+                    .replace("TAGS", row.Tags.length == 0 ? "∅" : (() => {
+
+                        const internalTags = row.Tags.split(",");
+                        let displayTags = "";
+
+                        for (const internalTag of internalTags) {
+                            for (const tag of require("./config.json").tags) {
+
+                                if (tag.internal == internalTag) {
+
+                                    displayTags += tag.display + ", ";
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (displayTags.length >= 0) {
+                            displayTags = displayTags.substring(0, displayTags.length - 2);
+                        }
+
+                        return displayTags;
+                    })())
+                    .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
+            ));
+        } else {
+            res.writeHead(404, { "Content-Type": "text/plain" });
+            res.end("404 Not Found");
+        }
+    });
+}
+
 function getSPA(insert) {
 
     const getTagInputHTML = (idUniquifier) => {
@@ -81,7 +124,7 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requested_endpoint)) {
 
-                endpoint.respond(getSPA, db, req, res);
+                endpoint.respond(respondImagePage, getSPA, db, req, res);
                 return;
             }
         }
