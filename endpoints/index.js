@@ -8,7 +8,7 @@ module.exports = [
 
             const tags = query.getAll("tag");
 
-            const tagWhere = tags.length == 0 ? "" : " WHERE " + tags.map(tag => `Tags LIKE "%${ tag }%"`).join(" AND ");
+            const tagWhere = tags.length == 0 ? "" : " AND " + tags.map(tag => `Tags LIKE "%${ tag }%"`).join(" AND ");
 
             const tagQuery = (() => {
 
@@ -20,7 +20,7 @@ module.exports = [
                 return construct;
             })();
 
-            db.get(`SELECT COUNT(*) AS count FROM Images${ tagWhere }`, (err, count) => {
+            db.get(`SELECT COUNT(*) AS count FROM Images WHERE Visibility = 2${ tagWhere };`, (err, count) => {
 
                 count = count.count;
 
@@ -38,7 +38,7 @@ module.exports = [
 
                 let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-                db.each(`SELECT rowid FROM Images${ tagWhere } LIMIT ${ config.itemsPerPage } OFFSET ${ (pageIndex - 1) * config.itemsPerPage };`, (err, row) => {
+                db.each(`SELECT rowid FROM Images WHERE Visibility = 2${ tagWhere } LIMIT ${ config.itemsPerPage } OFFSET ${ (pageIndex - 1) * config.itemsPerPage };`, (err, row) => {
 
                     images += `<a href="image/${ row.rowid }" class="galleryitem"><img src="/img/${ row.rowid }.png"></a>`;
 

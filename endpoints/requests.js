@@ -12,7 +12,7 @@ module.exports = [
 
                 if (message.length == 0) {
 
-                    respondError(400, "Reason cannot be empty");
+                    respondError(res, 400, "Reason cannot be empty");
                     return;
                 }
 

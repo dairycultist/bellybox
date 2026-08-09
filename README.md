@@ -20,7 +20,10 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [x] IP rate limiting (configurable with `config.json`)
 - [ ] Prevent crashes from input fudging
 - [ ] Prevent crashes from not handling `err` outputs
-- [x] "Console mode" (by passing `--console` command line argument) that lets you do moderator stuff
+- [x] "Console mode" (by passing `--console` command line argument)
+  - `logs` - prints all edit/deletion requests 
+  - `delete <id>` - deletes an image from the db/filesystem
+  - `(v)isibility <hidden/unlisted/public> <id>` - Changes the visibility of an image
 - [ ] Automatic launcher script that also initiates a program that puts the server back up if it goes down...
 - [ ] Hide uploaded images until they are manually vetted by a mod (prevents trolling!!)
 - [ ] Find good server provider and domain provider that aren't averse to goon content and have good storage and security (DDoS attacks and stuff)

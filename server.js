@@ -15,7 +15,7 @@ db.serialize(() => {
         if (!row) {
             db.run(`
                     CREATE TABLE Images
-                    (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT);
+                    (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT, Visibility INTEGER);
             `);
         }
     });
@@ -45,11 +45,18 @@ if (process.argv.includes("--console")) {
 
 function respondImagePage(res, id) {
 
-    db.get(`SELECT Description, Tags, CreationUnixTimestamp FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
+    db.get(`SELECT Description, Tags, CreationUnixTimestamp, Visibility FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
 
         if (row) {
 
+            if (row.Visibility == 0) {
+
+                respondError(res, 404, "Not Found");
+                return;
+            }
+
             respondSPA(res,
+                (row.Visibility == 1 ? "<p>This image is unlisted and awaiting moderator approval</p>" : "") +
                 fs.readFileSync("imagepage_widget.html", "utf8")
                     .replace("FILENAME", id + ".png")
                     .replaceAll("ID", id)
@@ -79,12 +86,10 @@ function respondImagePage(res, id) {
                     .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
             );
         } else {
-            res.writeHead(404, { "Content-Type": "text/plain" });
-            res.end("404 Not Found");
+
+            respondError(res, 404, "Not Found");
         }
     });
-
-    console.log("Response: Image page " + id);
 }
 
 function respondSPA(res, insert) {
