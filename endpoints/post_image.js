@@ -65,7 +65,7 @@ module.exports = [
 
                             if (err) {
                                 console.log(err);
-                                respondError(res, 300, "Server messed up");
+                                respondError(res, 500, "Server messed up");
                             }
 
                             const rowid = "" + this.lastID;

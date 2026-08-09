@@ -4,7 +4,10 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 
 ## Features
 
-- [x] Image uploading (that gets sanitized! non-images don't break the server!) without id collisions
+- [x] Image uploading
+  - Every image gets a unique ID
+  - Non-images don't break the server
+  - The image is sanitized (stripped of metadata and forced to png format)
 - [x] Image viewing (search page and dedicated page)
 - [x] Tagging images (with preset tags loaded from `config.json`)
 - [x] Giving descriptions to images (that get sanitized! whitespace + max length enforced)
@@ -13,12 +16,14 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [x] Pagination
 - [x] Request edit/deletion
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
-- [ ] Regular, automatic backups
-- [x] IP rate limiting
+- [ ] Regular, automatic, off-server backups (as a zip)
+- [x] IP rate limiting (configurable with `config.json`)
 - [ ] Prevent crashes from input fudging
 - [ ] Prevent crashes from not handling `err` outputs
 - [x] "Console mode" (by passing `--console` command line argument) that lets you do moderator stuff
 - [ ] Automatic launcher script that also initiates a program that puts the server back up if it goes down...
+- [ ] Hide uploaded images until they are manually vetted by a mod (prevents trolling!!)
+- [ ] Find good server provider and domain provider that aren't averse to goon content and have good storage and security (DDoS attacks and stuff)
 
 No forum/commenting planned, since moderating images is enough work for me already.
 
