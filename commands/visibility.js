@@ -11,9 +11,10 @@ module.exports = {
             return;
         }
 
+        const visibilityNumber = args[1] == "hidden" ? 0 : args[1] == "unlisted" ? 1 : 2;
         const rowid = args[2];
 
-        db.run(`UPDATE Images SET Visibility =${ args[1] == "hidden" ? 0 : args[1] == "unlisted" ? 1 : 2 } WHERE ROWID = "${ rowid }";`, (err) => {
+        db.run(`UPDATE Images SET Visibility =${ visibilityNumber } WHERE ROWID = "${ rowid }";`, (err) => {
 
             if (err) {
 
@@ -21,7 +22,7 @@ module.exports = {
                 return;
             }
 
-            console.log("Successfully set " + rowid + " to " + args[1] + ".");
+            console.log("Successfully set " + rowid + " to " + args[1] + " (if it doesn't exist, this did nothing).");
         });
     }
 };

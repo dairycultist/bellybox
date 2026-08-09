@@ -8,6 +8,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
   - Every image gets a unique ID
   - Non-images don't break the server
   - The image is sanitized (stripped of metadata and forced to png format)
+  - Images may be `public`, `unlisted`, or `hidden` (default on upload is configurable from `config.json`; `hidden` if no value is provided)
 - [x] Image viewing (search page and dedicated page)
 - [x] Tagging images (with preset tags loaded from `config.json`)
 - [x] Giving descriptions to images (that get sanitized! whitespace + max length enforced)
@@ -24,6 +25,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
   - `logs` - prints all edit/deletion requests 
   - `delete <id>` - deletes an image from the db/filesystem
   - `(v)isibility <hidden/unlisted/public> <id>` - Changes the visibility of an image
+  - `info <id>` - Prints info on the image (description, visibility, etc)
 - [ ] Automatic launcher script that also initiates a program that puts the server back up if it goes down...
 - [ ] Hide uploaded images until they are manually vetted by a mod (prevents trolling!!)
 - [ ] Find good server provider and domain provider that aren't averse to goon content and have good storage and security (DDoS attacks and stuff)
