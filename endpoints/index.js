@@ -38,9 +38,9 @@ module.exports = [
 
                 let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-                db.each(`SELECT rowid, FileType FROM Images${ tagWhere } LIMIT ${ config.itemsPerPage } OFFSET ${ (pageIndex - 1) * config.itemsPerPage };`, (err, row) => {
+                db.each(`SELECT rowid FROM Images${ tagWhere } LIMIT ${ config.itemsPerPage } OFFSET ${ (pageIndex - 1) * config.itemsPerPage };`, (err, row) => {
 
-                    images += `<a href="image/${ row.rowid }" class="galleryitem"><img src="/img/${ row.rowid }.${ row.FileType }"></a>`;
+                    images += `<a href="image/${ row.rowid }" class="galleryitem"><img src="/img/${ row.rowid }.png"></a>`;
 
                 }, () => {
                     

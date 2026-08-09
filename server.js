@@ -15,8 +15,7 @@ db.serialize(() => {
         if (!row) {
             db.run(`
                     CREATE TABLE Images
-                    (FileType TEXT, Description TEXT, Tags TEXT,
-                    CreationUnixTimestamp INTEGER, InfoLog TEXT);
+                    (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT);
             `);
         }
     });
@@ -46,13 +45,13 @@ if (process.argv.includes("--console")) {
 
 function respondImagePage(res, id) {
 
-    db.get(`SELECT FileType, Description, Tags, CreationUnixTimestamp FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
+    db.get(`SELECT Description, Tags, CreationUnixTimestamp FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
 
         if (row) {
 
             respondSPA(res,
                 fs.readFileSync("imagepage_widget.html", "utf8")
-                    .replace("FILENAME", id + "." + row.FileType)
+                    .replace("FILENAME", id + ".png")
                     .replaceAll("ID", id)
                     .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
                     .replace("TAGS", row.Tags.length == 0 ? "∅" : (() => {

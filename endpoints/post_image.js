@@ -59,10 +59,8 @@ module.exports = [
                         return;
                     }
 
-                    const fileType = image.originalFilename.split(".").at(-1);
-
                     // add database entry
-                    db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag ? fields.tag.join() : "" }", ${ Math.floor(Date.now() / 1000) }, "");`,
+                    db.run(`INSERT INTO Images VALUES ("${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag ? fields.tag.join() : "" }", ${ Math.floor(Date.now() / 1000) }, "");`,
                         async function(err) {
 
                             if (err) {
@@ -82,7 +80,7 @@ module.exports = [
                                 sanitizedImage.blit(uploadedImage, 0, 0);
 
                                 // save as png based on unique rowid
-                                await sanitizedImage.write("img/" + rowid + "." + fileType);
+                                await sanitizedImage.write("img/" + rowid + ".png");
 
                                 // delete temp image
                                 fs.unlink(image.path, () => {});
