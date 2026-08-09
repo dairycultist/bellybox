@@ -4,7 +4,7 @@ module.exports = [
     // fetching an image file
     {
         regex: new RegExp("^GET /img/|^GET /res/"),
-        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
 
             try {
                 const image = fs.readFileSync("." + req.url);

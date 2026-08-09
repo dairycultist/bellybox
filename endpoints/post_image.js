@@ -15,12 +15,9 @@ module.exports = [
     // posting an image to the booru
     {
         regex: new RegExp("^POST /post_image"),
-        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
 
             const address = req.socket.remoteAddress;
-
-            const rateLimitIncrementMinutes = 60;
-            const rateLimitThresholdMinutes = 1 * 60;
 
             if (!rateLimits[address])
                 rateLimits[address] = 0;
@@ -28,18 +25,18 @@ module.exports = [
             if (rateLimits[address] < Date.now()) {
 
                 // rate limit has completely run out; set to rateLimitIncrementMinutes from now
-                rateLimits[address] = Date.now() + (rateLimitIncrementMinutes * 60 * 1000);
+                rateLimits[address] = Date.now() + (config.rateLimitIncrementMinutes * 60 * 1000);
 
-            } else if (rateLimits[address] < Date.now() + (rateLimitThresholdMinutes * 60 * 1000)) {
+            } else if (rateLimits[address] < Date.now() + (config.rateLimitThresholdMinutes * 60 * 1000)) {
 
                 // increment rate limit
-                rateLimits[address] += rateLimitIncrementMinutes * 60 * 1000;
+                rateLimits[address] += config.rateLimitIncrementMinutes * 60 * 1000;
 
             } else {
 
                 // we've exceeded rateLimitThresholdMinutes beyond the current time; deny upload
                 respondError(res, 429, "Rate Limit Exceeded (You may upload again in: "
-                    + ((rateLimits[address] - Date.now() - (rateLimitThresholdMinutes * 60 * 1000)) / 60 / 1000)
+                    + (Math.floor((rateLimits[address] - Date.now() - (config.rateLimitThresholdMinutes * 60 * 1000)) / 60 / 100) / 10)
                     + "m)");
                 return;
             }

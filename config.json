@@ -15,5 +15,7 @@
         { "internal": "focus_belly", "display": "Belly Focus" },
         { "internal": "focus_ass", "display": "Ass Focus" }
     ],
-    "itemsPerPage": 20
+    "itemsPerPage": 20,
+    "rateLimitIncrementMinutes": 60,
+    "rateLimitThresholdMinutes": 240
 }

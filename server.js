@@ -163,7 +163,7 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requestedEndpoint)) {
 
-                endpoint.respond(respondImagePage, respondSPA, respondError, db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                endpoint.respond(respondImagePage, respondSPA, respondError, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
                 return;
             }
         }

@@ -4,7 +4,7 @@ module.exports = [
     // index (potentially including tag search and page)
     {
         regex: new RegExp("^GET /(\\\?.*)?$"),
-        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
 
             const tags = query.getAll("tag");
 
@@ -20,13 +20,11 @@ module.exports = [
                 return construct;
             })();
 
-            const itemsPerPage = require("../config.json").itemsPerPage;
-
             db.get(`SELECT COUNT(*) AS count FROM Images${ tagWhere }`, (err, count) => {
 
                 count = count.count;
 
-                const pageTotal = Math.ceil(count / itemsPerPage);
+                const pageTotal = Math.ceil(count / config.itemsPerPage);
                 const pageIndex = (() => {
                     const input = Number(query.get("page") || 1);
                     if (isNaN(input))
@@ -40,7 +38,7 @@ module.exports = [
 
                 let images = "<div style='display: flex; flex-wrap: wrap;'>";
 
-                db.each(`SELECT rowid, FileType FROM Images${ tagWhere } LIMIT ${ itemsPerPage } OFFSET ${ (pageIndex - 1) * itemsPerPage };`, (err, row) => {
+                db.each(`SELECT rowid, FileType FROM Images${ tagWhere } LIMIT ${ config.itemsPerPage } OFFSET ${ (pageIndex - 1) * config.itemsPerPage };`, (err, row) => {
 
                     images += `<a href="image/${ row.rowid }" class="galleryitem"><img src="/img/${ row.rowid }.${ row.FileType }"></a>`;
 

@@ -14,7 +14,7 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [x] Request edit/deletion
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
 - [ ] Regular, automatic backups
-- [ ] IP rate limiting
+- [x] IP rate limiting
 - [ ] Prevent crashes from input fudging
 - [ ] Prevent crashes from not handling `err` outputs
 - [x] "Console mode" (by passing `--console` command line argument) that lets you do moderator stuff

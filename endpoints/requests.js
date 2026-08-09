@@ -4,7 +4,7 @@ module.exports = [
     // dedicated page for an image
     {
         regex: new RegExp("^POST /(request_edit|request_delete)$"),
-        respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
