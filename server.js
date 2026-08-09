@@ -112,6 +112,8 @@ function respondSPA(res, insert) {
             .replace("<!-- insert -->", insert)
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))
+            .replaceAll("<!-- title -->", require("./config.json").title)
+            .replaceAll("<!-- upload description -->", require("./config.json").uploadDescription)
     );
 
     console.log("Response: SPA");

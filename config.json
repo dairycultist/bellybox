@@ -1,4 +1,6 @@
 {
+    "title": "my bellybox instance",
+    "uploadDescription": "Bellybox is a booru for drawings of fat women. Please do not upload thin women, men, excessive slob, gore, or illegal content.",
     "tags": [
         { "internal": "human", "display": "Human", "icon": "/res/human.png" },
         { "internal": "kemono", "display": "Kemono", "icon": "/res/kemono.png" },
