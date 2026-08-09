@@ -57,7 +57,7 @@ function respondImagePage(res, id) {
 
             respondSPA(res,
                 (row.Visibility == 1 ? "<p>This image is unlisted and awaiting moderator approval</p>" : "") +
-                fs.readFileSync("imagepage_widget.html", "utf8")
+                fs.readFileSync("./html/imagepage_widget.html", "utf8")
                     .replace("FILENAME", id + ".png")
                     .replaceAll("ID", id)
                     .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
@@ -113,7 +113,7 @@ function respondSPA(res, insert) {
 
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
-        fs.readFileSync("SPA.html", "utf8")
+        fs.readFileSync("./html/SPA.html", "utf8")
             .replace("<!-- insert -->", insert)
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))

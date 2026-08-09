@@ -46,7 +46,7 @@ module.exports = [
                     
                     // respond on complete
                     respondSPA(res,
-                        fs.readFileSync("pagenav_widget.html", "utf8")
+                        fs.readFileSync("./html/pagenav_widget.html", "utf8")
                             .replaceAll("<!-- total result items -->", count)
                             .replaceAll("<!-- page index -->", pageIndex)
                             .replaceAll("<!-- page total -->", pageTotal)
