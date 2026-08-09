@@ -2,6 +2,9 @@ const fs = require("fs");
 const multiparty = require("multiparty");
 const { Jimp } = require("jimp");
 
+// rate limit info is stored in memory as [ip:time_to_end_limit] pairs
+const rateLimits = {};
+
 // we could convert all the rowids to base62 for the url, but it's not really that important
 // do {
 //     id ='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.charAt(index % 62) + id;
@@ -14,6 +17,33 @@ module.exports = [
         regex: new RegExp("^POST /post_image"),
         respond: (respondImagePage, respondSPA, respondError, db, query, req, res) => {
 
+            const address = req.socket.remoteAddress;
+
+            const rateLimitIncrementMinutes = 60;
+            const rateLimitThresholdMinutes = 1 * 60;
+
+            if (!rateLimits[address])
+                rateLimits[address] = 0;
+
+            if (rateLimits[address] < Date.now()) {
+
+                // rate limit has completely run out; set to rateLimitIncrementMinutes from now
+                rateLimits[address] = Date.now() + (rateLimitIncrementMinutes * 60 * 1000);
+
+            } else if (rateLimits[address] < Date.now() + (rateLimitThresholdMinutes * 60 * 1000)) {
+
+                // increment rate limit
+                rateLimits[address] += rateLimitIncrementMinutes * 60 * 1000;
+
+            } else {
+
+                // we've exceeded rateLimitThresholdMinutes beyond the current time; deny upload
+                respondError(res, 429, "Rate Limit Exceeded (You may upload again in: "
+                    + ((rateLimits[address] - Date.now() - (rateLimitThresholdMinutes * 60 * 1000)) / 60 / 1000)
+                    + "m)");
+                return;
+            }
+
             new multiparty.Form().parse(req, function(err, fields, files) {
 
                 const image = files.image[0];
@@ -24,7 +54,7 @@ module.exports = [
 
                 } else {
 
-                    console.log(`Received image ${ image.originalFilename } of size ${ image.size }b`);
+                    console.log(`Received image ${ image.originalFilename } of size ${ image.size }b from ${ req.socket.remoteAddress } (forwarded for: ${ req.headers["x-forwarded-for"] })`);
 
                     if (image.size > 1000000000) { // 1GB
 
@@ -35,7 +65,7 @@ module.exports = [
                     const fileType = image.originalFilename.split(".").at(-1);
 
                     // add database entry
-                    db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag.join() }", ${ Math.floor(Date.now() / 1000) }, "");`,
+                    db.run(`INSERT INTO Images VALUES ("${ fileType }", "${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag ? fields.tag.join() : "" }", ${ Math.floor(Date.now() / 1000) }, "");`,
                         async function(err) {
 
                             if (err) {
