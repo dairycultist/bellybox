@@ -3,7 +3,7 @@
         { "internal": "human", "display": "Human", "icon": "/res/human.png" },
         { "internal": "kemono", "display": "Kemono", "icon": "/res/kemono.png" },
         { "internal": "furry", "display": "Furry", "icon": "/res/furry.png" },
-        { "internal": "loli", "display": "Loli/Deburori" },
+        { "internal": "loli", "display": "Loli/Deburori", "icon": "/res/loli.png" },
         { "internal": "size_1", "display": "Barely fat", "icon": "/res/size_1.png" },
         { "internal": "size_2", "display": "Hefty", "icon": "/res/size_2.png" },
         { "internal": "size_3", "display": "Couch-size Blob", "icon": "/res/size_3.png" },
