@@ -10,7 +10,9 @@
         h1 { text-align: center; }
         h1 a { color: white; }
         form { border: 1px solid #5a96c9; background: #dbeaf0; padding: 1em; margin: 1em 0; }
-        th { text-align: left; padding-right: 1em; }
+        table { border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #88a; padding: 2px; }
+        th { text-align: left; padding-right: 1em; vertical-align: top; }
         p {color: #88a; }
         summary { color: white; font-weight: 700; padding: 0 1em 1em 1em; cursor: pointer; }
         details form { margin-top: 0; }
@@ -46,15 +48,15 @@
 
                 <table>
                     <tr>
-                        <td><label for="image">Image:</label></td>
+                        <th><label for="image">Image:</label></th>
                         <td><input type="file" id="image" name="image" accept="image/*"></td>
                     </tr>
                     <tr>
-                        <td><label for="description">Description (max 600 characters):</label></td>
-                        <td><textarea id="description" name="description" rows="4" cols="50" maxlength="600" placeholder="Drawn by xyz, has abc character..."></textarea></td>
+                        <th><label for="description">Description:</label></th>
+                        <td><textarea id="description" name="description" rows="4" cols="50" maxlength="600" placeholder="Drawn by xyz, has abc character... (max 600ch)"></textarea></td>
                     </tr>
                     <tr>
-                        <td>Tags:</td>
+                        <th>Tags:</th>
                         <td><!-- tags --></td>
                     </tr>
                 </table>
