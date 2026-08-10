@@ -18,7 +18,7 @@ No forum/commenting planned, since it makes moderating harder and encourages tox
 - [x] Giving descriptions to images (that get sanitized! whitespace + max length enforced)
 - [x] Filtering by tag
 - [ ] Filtering by description substring (good for searching by author or specific content not covered by tags)
-- [ ] Advanced filtering (include, exclude, and, or, whatever)
+- [ ] Advanced filtering (`include`, `exclude`, `and`, `or`, etc)
 - [x] Pagination
 
 ### Moderation/Quality Control
@@ -27,7 +27,7 @@ No forum/commenting planned, since it makes moderating harder and encourages tox
   - Simple username-password, no email
   - Passwords stored [salted and hashed](https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security), obviously
   - You can only make an account if you get a single use invite code from the owner
-  - Accounts can be untrusted, trusted (much more lenient rate limiting), or moderator
+  - Accounts can be `untrusted`, `trusted` (much more lenient rate limiting), or `moderator`
 - [x] "Console mode" (by passing `--console` command line argument)
   - `logs` - prints all edit/deletion requests 
   - `delete <id>` - deletes an image from the db/filesystem
@@ -63,3 +63,5 @@ npm install jimp
 https://www.npmjs.com/package/multiparty
 
 https://www.npmjs.com/package/sqlite3
+
+https://www.npmjs.com/package/jimp
