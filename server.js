@@ -19,6 +19,8 @@ db.serialize(() => {
             `);
         }
     });
+
+    // TODO create Users table if it doesn't exist
 });
 
 if (process.argv.includes("--console")) {
@@ -114,6 +116,7 @@ function respondSPA(res, insert) {
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
         fs.readFileSync("./html/SPA.html", "utf8")
+            .replace("<!-- user -->", true ? fs.readFileSync("./html/log_in_widget.html", "utf8") : fs.readFileSync("./html/logged_in_widget.html", "utf8"))
             .replace("<!-- insert -->", insert)
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))
