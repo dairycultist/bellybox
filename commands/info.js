@@ -23,8 +23,9 @@ module.exports = {
             console.log("Description:           " + row.Description);
             console.log("Tags:                  " + row.Tags);
             console.log("CreationUnixTimestamp: " + row.CreationUnixTimestamp);
-            console.log("InfoLog:\n" + row.InfoLog);
+            console.log("InfoLog:\n"              + row.InfoLog);
             console.log("Visibility:            " + (row.Visibility == 0 ? "hidden" : row.Visibility == 1 ? "unlisted" : row.Visibility == 2 ? "public" : "INVALID"));
+            console.log("UploaderUsername:      " + row.UploaderUsername);
         });
     }
 };
