@@ -14,13 +14,27 @@ db.serialize(() => {
         // create Images table if it doesn't exist
         if (!row) {
             db.run(`
-                    CREATE TABLE Images
-                    (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT, Visibility INTEGER);
+                CREATE TABLE Images
+                (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT, Visibility INTEGER);
             `);
         }
     });
 
-    // TODO create Users table if it doesn't exist
+    db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='Users';", (err, row) => {
+
+        // create Users table if it doesn't exist
+        if (!row) {
+            db.run(`
+                CREATE TABLE Users
+                (Username TEXT, HashedPassword TEXT, SessionCookie TEXT,
+                SessionCookieExpiryUnixTimestamp INTEGER, UserType INTEGER);
+            `, () => {
+
+                // add a test user
+                db.run(`INSERT INTO Users VALUES ("John", "password", "", 0, 0);`);
+            });
+        }
+    });
 });
 
 if (process.argv.includes("--console")) {
@@ -172,7 +186,11 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requestedEndpoint)) {
 
+                console.log("COOKIE: " + req.headers.cookie); // undefined if none are set
+
+                // TODO pass user db row to endpoint if the session cookie matches to one
                 endpoint.respond(respondImagePage, respondSPA, respondError, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                
                 return;
             }
         }

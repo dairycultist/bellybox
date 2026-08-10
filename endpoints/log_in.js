@@ -39,12 +39,25 @@ module.exports = [
                     return;
                 }
 
-                respondError(res, 200, "You would have logged in successfully, but we're just testing!");
+                // check if user exists
+                // TODO hash password
+                db.get(`SELECT 1 FROM Users WHERE Username="${ fields.username[0] }" AND HashedPassword="${ fields.password[0] }";`, (err, exists) => {
 
-                // create and store session cookie and respond with it in header
-                // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie
+                    console.log(exists);
 
-                // db.run(`UPDATE Images SET InfoLog = InfoLog || "${ req.url.includes("edit") ? "EDIT  " : "DELETE" } <t:${ Date.now() }> ${ message }\n" WHERE ROWID = "${ fields.id[0] }";`);
+                    if (!err && exists) {
+
+                        respondError(res, 200, "You would have logged in successfully, but we're just testing!");
+
+                        // create and store session cookie and respond with it in header
+                        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie
+
+                        // db.run(`UPDATE Images SET InfoLog = InfoLog || "${ req.url.includes("edit") ? "EDIT  " : "DELETE" } <t:${ Date.now() }> ${ message }\n" WHERE ROWID = "${ fields.id[0] }";`);
+
+                    } else {
+                        respondError(res, 422, "Incorrect username or password.");
+                    }
+                });
             });
         }
     }
