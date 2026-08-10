@@ -188,9 +188,15 @@ createServer((req, res) => {
 
                 console.log("COOKIE: " + req.headers.cookie); // undefined if none are set
 
-                // TODO pass user db row to endpoint if the session cookie matches to one
-                endpoint.respond(respondImagePage, respondSPA, respondError, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
-                
+                // TODO all responses first check if a valid session cookie was sent by the client -- if it was, we treat them as logged in
+                // TODO also refresh the session cookie's expiry locally
+                // db.get(`SELECT * FROM Users WHERE SessionCookie = "${ id }";`, (err, user) => {
+
+                    // TODO check SessionCookieExpiryUnixTimestamp
+
+                    // TODO pass user db row to endpoint if the session cookie matches to one
+                    endpoint.respond(respondImagePage, respondSPA, respondError, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                // });
                 return;
             }
         }

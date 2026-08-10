@@ -1,6 +1,5 @@
 const multiparty = require("multiparty");
-
-// TODO all responses first check if a valid session cookie was sent by the client -- if it was, we treat them as logged in
+const crypto = require("crypto");
 
 module.exports = [
     {
@@ -43,16 +42,25 @@ module.exports = [
                 // TODO hash password
                 db.get(`SELECT 1 FROM Users WHERE Username="${ fields.username[0] }" AND HashedPassword="${ fields.password[0] }";`, (err, exists) => {
 
-                    console.log(exists);
-
                     if (!err && exists) {
 
-                        respondError(res, 200, "You would have logged in successfully, but we're just testing!");
+                        // create session cookie
+                        const sessionCookie = fields.username[0] + "-" + crypto.randomInt(1000000000, 9999999999);
 
-                        // create and store session cookie and respond with it in header
-                        // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie
+                        // store session cookie (so we can recognize when the same user is making a request)
+                        // also overrides previous session cookie, meaning the same user can't be logged in on two devices 
+                        db.run(`UPDATE Users SET SessionCookie = "${ sessionCookie }" WHERE Username="${ fields.username[0] }" AND HashedPassword="${ fields.password[0] }";`);
 
-                        // db.run(`UPDATE Images SET InfoLog = InfoLog || "${ req.url.includes("edit") ? "EDIT  " : "DELETE" } <t:${ Date.now() }> ${ message }\n" WHERE ROWID = "${ fields.id[0] }";`);
+                        // respond with session cookie in header
+                        res.writeHead(200, {
+                            "Content-Type": "text/html; charset=utf-8",
+                            "Set-Cookie": "session=" + sessionCookie
+                        });
+                        res.end(`
+                            Successfully logged in as ${ fields.username[0] }!
+                            <br>
+                            <a href="/">Back to home</a>
+                        `);
 
                     } else {
                         respondError(res, 422, "Incorrect username or password.");
