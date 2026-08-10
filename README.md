@@ -17,6 +17,10 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [ ] Advanced filtering (include, exclude, and, or, whatever)
 - [x] Pagination
 - [x] Request edit/deletion
+- [ ] Account system
+  - Simple username-password, no email
+  - Passwords stored [salted and hashed](https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security), obviously
+  - You can only make an account if you get a single use invite code from the owner
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
 - [ ] Regular, automatic, off-server backups (as a zip)
 - [x] IP rate limiting (configurable with `config.json`)
