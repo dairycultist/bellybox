@@ -1,24 +1,26 @@
-<img src="/img/FILENAME" style="max-width: 100%; max-height: 90vh;">
+<img src="/img/<!-- filename -->" style="max-width: 100%; max-height: 90vh;">
+<br>
+<a href="/img/<!-- filename -->" download>Download</a>
 <table>
     <tr>
         <th>Uploaded: </th>
-        <td>UPLOADTIME</td>
+        <td><!-- upload time --></td>
     </tr>
     <tr>
         <th>Tags: </th>
-        <td>TAGS</td>
+        <td><!-- tags --></td>
     </tr>
     <tr>
         <th>Description: </th>
-        <td>DESCRIPTION</td>
+        <td><!-- description --></td>
     </tr>
     <tr>
         <th>Uploaded by: </th>
-        <td>not a thing yet</td>
+        <td><!-- upload user --></td>
     </tr>
 </table>
 <form class="box" action="/request_edit" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" value="ID">
+    <input type="hidden" name="id" value="<!-- id -->">
     <strong>Request edit</strong>
     <br><br>
     <table>
@@ -30,7 +32,7 @@
     <input type="submit" value="Request"/>
 </form>
 <form class="box" action="/request_delete" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="id" value="ID">
+    <input type="hidden" name="id" value="<!-- id -->">
     <strong>Request deletion</strong>
     <br><br>
     <table>

@@ -74,10 +74,10 @@ function respondImagePage(res, user, id) {
             respondSPA(res, user,
                 (row.Visibility == 1 ? "<p>This image is unlisted and awaiting moderator approval</p>" : "") +
                 fs.readFileSync("./html/imagepage_widget.html", "utf8")
-                    .replace("FILENAME", id + ".png")
-                    .replaceAll("ID", id)
-                    .replace("UPLOADTIME", new Date(row.CreationUnixTimestamp * 1000))
-                    .replace("TAGS", row.Tags.length == 0 ? "∅" : (() => {
+                    .replaceAll("<!-- filename -->", id + ".png")
+                    .replaceAll("<!-- id -->", id)
+                    .replace("<!-- upload time -->", new Date(row.CreationUnixTimestamp * 1000))
+                    .replace("<!-- tags -->", row.Tags.length == 0 ? "∅" : (() => {
 
                         const internalTags = row.Tags.split(",");
                         let displayTags = "";
@@ -99,7 +99,8 @@ function respondImagePage(res, user, id) {
 
                         return displayTags;
                     })())
-                    .replace("DESCRIPTION", row.Description.length == 0 ? "∅" : row.Description)
+                    .replace("<!-- description -->", row.Description.length == 0 ? "∅" : row.Description)
+                    .replace("<!-- upload user -->", "idk")
             );
         } else {
 
