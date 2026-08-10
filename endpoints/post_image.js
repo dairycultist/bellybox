@@ -67,7 +67,10 @@ module.exports = [
                     }
 
                     // add database entry
-                    db.run(`INSERT INTO Images VALUES ("${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }", "${ fields.tag ? fields.tag.join() : "" }", ${ Math.floor(Date.now() / 1000) }, "", ${ config.visibilityOnUpload == "public" ? 2 : config.visibilityOnUpload == "unlisted" ? 1 : 0 });`,
+                    db.run(`INSERT INTO Images VALUES ("${ fields.description[0].trim().replaceAll(/  +/g, " ").replaceAll(/\n\s*/g, "<br>") }",
+                            "${ fields.tag ? fields.tag.join() : "" }", ${ Math.floor(Date.now() / 1000) }, "",
+                            ${ config.visibilityOnUpload == "public" ? 2 : config.visibilityOnUpload == "unlisted" ? 1 : 0 },
+                            "${ user.Username }");`,
                         async function(err) {
 
                             if (err) {

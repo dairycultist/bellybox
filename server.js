@@ -15,7 +15,8 @@ db.serialize(() => {
         if (!row) {
             db.run(`
                 CREATE TABLE Images
-                (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER, InfoLog TEXT, Visibility INTEGER);
+                (Description TEXT, Tags TEXT, CreationUnixTimestamp INTEGER,
+                InfoLog TEXT, Visibility INTEGER, UploaderUsername TEXT);
             `);
         }
     });
@@ -61,7 +62,7 @@ if (process.argv.includes("--console")) {
 
 function respondImagePage(res, user, id) {
 
-    db.get(`SELECT Description, Tags, CreationUnixTimestamp, Visibility FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
+    db.get(`SELECT Description, Tags, CreationUnixTimestamp, Visibility, UploaderUsername FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
 
         if (row) {
 
@@ -77,6 +78,8 @@ function respondImagePage(res, user, id) {
                     .replaceAll("<!-- filename -->", id + ".png")
                     .replaceAll("<!-- id -->", id)
                     .replace("<!-- upload time -->", new Date(row.CreationUnixTimestamp * 1000))
+                    .replace("<!-- upload user -->", row.UploaderUsername.length == 0 ? "∅" : row.UploaderUsername)
+                    .replace("<!-- description -->", row.Description.length == 0 ? "∅" : row.Description)
                     .replace("<!-- tags -->", row.Tags.length == 0 ? "∅" : (() => {
 
                         const internalTags = row.Tags.split(",");
@@ -99,8 +102,6 @@ function respondImagePage(res, user, id) {
 
                         return displayTags;
                     })())
-                    .replace("<!-- description -->", row.Description.length == 0 ? "∅" : row.Description)
-                    .replace("<!-- upload user -->", "idk")
             );
         } else {
 
