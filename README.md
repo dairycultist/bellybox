@@ -12,8 +12,9 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
 - [x] Image viewing (search page and dedicated page)
 - [x] Tagging images (with preset tags loaded from `config.json`)
 - [x] Giving descriptions to images (that get sanitized! whitespace + max length enforced)
-- [x] Searching by tag
-- [ ] Searching by description substring (good for searching by author or specific content not covered by tags)
+- [x] Filtering by tag
+- [ ] Filtering by description substring (good for searching by author or specific content not covered by tags)
+- [ ] Advanced filtering (include, exclude, and, or, whatever)
 - [x] Pagination
 - [x] Request edit/deletion
 - [ ] Thumbnail saving (ID_thumb.png, much smaller)
@@ -28,6 +29,9 @@ A lightweight, open-source booru software specifically for **drawings of fat wom
   - `info <id>` - Prints info on the image (description, visibility, etc)
 - [ ] Automatic launcher script that also initiates a program that puts the server back up if it goes down...
 - [ ] Hide uploaded images until they are manually vetted by a mod (prevents trolling!!)
+- [ ] PhotoDNA integration
+- [ ] HTTPS
+- [ ] RSS feed (perhaps an RSS feed tied to particular artist tags, i.e. "Follow Username483 via RSS for more auto-feed updates")
 - [ ] Find good server provider and domain provider that aren't averse to goon content and have good storage and security (DDoS attacks and stuff)
 
 No forum/commenting planned, since moderating images is enough work for me already.
