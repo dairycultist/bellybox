@@ -26,15 +26,16 @@ No forum/commenting planned, since it makes moderating harder and encourages tox
 - [x] Account system
   - Simple username-password, no email
   - Only logged-in users may upload images
-  - TODO Passwords stored [salted and hashed](https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security), obviously
+  - Passwords stored salted and hashed
+  - TODO Automatic logout after certain amount of time inactive (configurable from `config.json`) 
   - TODO You can only make an account if you get a single use invite code from the owner
   - TODO Accounts can be `untrusted`, `trusted` (much more lenient rate limiting), or `moderator`
 - [x] "Console mode" (by passing `--console` command line argument)
   - `logs` - prints all edit/deletion requests 
   - `delete <id>` - deletes an image from the db/filesystem
   - `(v)isibility <hidden/unlisted/public> <id>` - Changes the visibility of an image
-  - `info <id>` - Prints info on the image (description, visibility, etc)
-- [x] Hide uploaded images until they are manually vetted by a mod
+  - `info <id>` - Prints all info on the image (description, visibility, etc)
+- [x] Hide uploaded images (if default on upload is set to non-`public`) until they are manually vetted by a mod
 - [x] Request edit/deletion
 - [ ] PhotoDNA integration
 

@@ -32,7 +32,15 @@ db.serialize(() => {
             `, () => {
 
                 // add a test user
-                db.run(`INSERT INTO Users VALUES ("John", "password", "", 0, 0);`);
+                // https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security
+                const crypto = require("crypto");
+
+                const password = "password";
+                
+                const salt = crypto.randomBytes(16).toString("hex");
+                const hash = crypto.scryptSync(password, salt, 64).toString("hex");
+                
+                db.run(`INSERT INTO Users VALUES ("John", "${ salt + "-" + hash }", "", 0, 0);`);
             });
         }
     });

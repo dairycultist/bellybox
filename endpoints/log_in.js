@@ -38,36 +38,47 @@ module.exports = [
                     return;
                 }
 
-                // TODO actually hash the password
-                const hashedPassword = fields.password[0];
-
                 // check if user exists
-                db.get(`SELECT 1 FROM Users WHERE Username="${ fields.username[0] }" AND HashedPassword="${ hashedPassword }";`, (err, exists) => {
+                db.get(`SELECT HashedPassword FROM Users WHERE Username="${ fields.username[0] }";`, (err, user) => {
 
-                    if (!err && exists) {
+                    if (err) {
 
-                        // create session cookie
-                        const sessionCookie = fields.username[0] + "-" + crypto.randomInt(1000000000, 9999999999);
-
-                        // store session cookie (so we can recognize when the same user is making a request)
-                        // also overrides previous session cookie, meaning the same user can't be logged in on two devices 
-                        db.run(`UPDATE Users SET SessionCookie = "${ sessionCookie }" WHERE Username="${ fields.username[0] }" AND HashedPassword="${ hashedPassword }";`);
-
-                        // respond with session cookie in header
-                        // no expiry provided means it'll persist only as long as the browser is loaded in memory
-                        res.writeHead(200, {
-                            "Content-Type": "text/html; charset=utf-8",
-                            "Set-Cookie": "session=" + sessionCookie
-                        });
-                        res.end(`
-                            Successfully logged in as ${ fields.username[0] }!
-                            <br>
-                            <a href="/">Back to home</a>
-                        `);
-
-                    } else {
-                        respondError(res, 422, "Incorrect username or password.");
+                        respondError(res, 300, "Unknown server error; try again later.");
+                        return;
                     }
+
+                    // check if username is incorrect
+                    if (!user) {
+
+                        respondError(res, 422, "Incorrect username or password.");
+                        return;
+                    }
+
+                    // check if password is incorrect
+                    if (crypto.scryptSync(fields.password[0], user.HashedPassword.split("-")[0], 64).toString("hex") !== user.HashedPassword.split("-")[1]) {
+
+                        respondError(res, 422, "Incorrect username or password.");
+                        return;
+                    }
+
+                    // create session cookie
+                    const sessionCookie = fields.username[0] + "-" + crypto.randomInt(1000000000, 9999999999);
+
+                    // store session cookie (so we can recognize when the same user is making a request)
+                    // also overrides previous session cookie, meaning the same user can't be logged in on two devices 
+                    db.run(`UPDATE Users SET SessionCookie = "${ sessionCookie }" WHERE Username="${ fields.username[0] }";`);
+
+                    // respond with session cookie in header
+                    // no expiry provided means it'll persist only as long as the browser is loaded in memory
+                    res.writeHead(200, {
+                        "Content-Type": "text/html; charset=utf-8",
+                        "Set-Cookie": "session=" + sessionCookie
+                    });
+                    res.end(`
+                        Successfully logged in as ${ fields.username[0] }!
+                        <br>
+                        <a href="/">Back to home</a>
+                    `);
                 });
             });
         }
