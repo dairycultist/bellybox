@@ -4,7 +4,7 @@ module.exports = [
     // dedicated page for an image
     {
         regex: new RegExp("^POST /(request_edit|request_delete)$"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
@@ -19,9 +19,10 @@ module.exports = [
                 if (message.length > 280)
                     message = message.substring(0, 280);
 
+                // TODO include user/ip info in log
                 db.run(`UPDATE Images SET InfoLog = InfoLog || "${ req.url.includes("edit") ? "EDIT  " : "DELETE" } <t:${ Date.now() }> ${ message }\n" WHERE ROWID = "${ fields.id[0] }";`);
 
-                respondImagePage(res, fields.id[0]);
+                respondImagePage(res, user, fields.id[0]);
             });
         }
     }

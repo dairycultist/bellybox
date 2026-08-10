@@ -15,7 +15,14 @@ module.exports = [
     // posting an image to the booru
     {
         regex: new RegExp("^POST /post_image"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
+
+            // only logged in users can post
+            if (!user) {
+
+                respondError(res, 401, "Unauthorized (you are not logged in)");
+                return;
+            }
 
             const address = req.socket.remoteAddress;
 
@@ -86,7 +93,7 @@ module.exports = [
                                 fs.unlink(image.path, () => {});
 
                                 // respond with new image's page
-                                respondImagePage(res, rowid);
+                                respondImagePage(res, user, rowid);
 
                             } catch (e) {
 

@@ -3,7 +3,7 @@ const fs = require("fs");
 module.exports = [
     {
         regex: new RegExp("^GET /img/"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
 
             db.get(`SELECT Visibility FROM Images WHERE ROWID = "${ req.url.substring(5).split(".")[0] }";`, (err, row) => {
 
@@ -32,7 +32,7 @@ module.exports = [
     },
     {
         regex: new RegExp("^GET /res/"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
 
             try {
 

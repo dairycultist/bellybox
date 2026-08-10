@@ -59,7 +59,7 @@ if (process.argv.includes("--console")) {
     return;
 }
 
-function respondImagePage(res, id) {
+function respondImagePage(res, user, id) {
 
     db.get(`SELECT Description, Tags, CreationUnixTimestamp, Visibility FROM Images WHERE ROWID = "${ id }";`, (err, row) => {
 
@@ -71,7 +71,7 @@ function respondImagePage(res, id) {
                 return;
             }
 
-            respondSPA(res,
+            respondSPA(res, user,
                 (row.Visibility == 1 ? "<p>This image is unlisted and awaiting moderator approval</p>" : "") +
                 fs.readFileSync("./html/imagepage_widget.html", "utf8")
                     .replace("FILENAME", id + ".png")
@@ -108,7 +108,7 @@ function respondImagePage(res, id) {
     });
 }
 
-function respondSPA(res, insert) {
+function respondSPA(res, user, insert) {
 
     const getTagInputHTML = (idUniquifier) => {
 
@@ -130,7 +130,7 @@ function respondSPA(res, insert) {
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
         fs.readFileSync("./html/SPA.html", "utf8")
-            .replace("<!-- user -->", true ? fs.readFileSync("./html/log_in_widget.html", "utf8") : fs.readFileSync("./html/logged_in_widget.html", "utf8"))
+            .replace("<!-- user -->", user ? fs.readFileSync("./html/logged_in_widget.html", "utf8").replace("<!-- username -->", user.Username) : fs.readFileSync("./html/log_in_widget.html", "utf8"))
             .replace("<!-- insert -->", insert)
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))
@@ -186,17 +186,42 @@ createServer((req, res) => {
 
             if (endpoint.regex.test(requestedEndpoint)) {
 
-                console.log("COOKIE: " + req.headers.cookie); // undefined if none are set
+                const sessionCookie = (() => {
 
-                // TODO all responses first check if a valid session cookie was sent by the client -- if it was, we treat them as logged in
-                // TODO also refresh the session cookie's expiry locally
-                // db.get(`SELECT * FROM Users WHERE SessionCookie = "${ id }";`, (err, user) => {
+                    if (!req.headers.cookie)
+                        return undefined;
 
-                    // TODO check SessionCookieExpiryUnixTimestamp
+                    const sessionKeyValue = req.headers.cookie.split("; ").find(item => /^session=/.test(item));
 
-                    // TODO pass user db row to endpoint if the session cookie matches to one
-                    endpoint.respond(respondImagePage, respondSPA, respondError, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
-                // });
+                    if (!sessionKeyValue)
+                        return undefined;
+
+                    const sessionValue = sessionKeyValue.substring(8);
+
+                    if (sessionValue.length == 0)
+                        return undefined;
+
+                    return sessionValue;
+                })();
+
+                if (sessionCookie) {
+
+                    // attempt to find user with that session cookie
+                    // TODO also refresh the session cookie's expiry locally
+                    db.get(`SELECT * FROM Users WHERE SessionCookie = "${ sessionCookie }";`, (err, user) => {
+
+                        // TODO check SessionCookieExpiryUnixTimestamp
+
+                        // pass user db row to endpoint if the session cookie matches to one
+                        endpoint.respond(respondImagePage, respondSPA, respondError, user ? user : null, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                    });
+
+                } else {
+
+                    // null user
+                    endpoint.respond(respondImagePage, respondSPA, respondError, null, require("./config.json"), db, new URLSearchParams(req.url.split("?", 2)[1]), req, res);
+                }
+
                 return;
             }
         }

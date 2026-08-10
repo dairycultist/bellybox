@@ -4,7 +4,7 @@ module.exports = [
     // index (potentially including tag search and page)
     {
         regex: new RegExp("^GET /(\\\?.*)?$"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
 
             const tags = query.getAll("tag");
 
@@ -45,7 +45,7 @@ module.exports = [
                 }, () => {
                     
                     // respond on complete
-                    respondSPA(res,
+                    respondSPA(res, user,
                         fs.readFileSync("./html/pagenav_widget.html", "utf8")
                             .replaceAll("<!-- total result items -->", count)
                             .replaceAll("<!-- page index -->", pageIndex)

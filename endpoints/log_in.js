@@ -4,7 +4,7 @@ const crypto = require("crypto");
 module.exports = [
     {
         regex: new RegExp("^POST /log_in$"),
-        respond: (respondImagePage, respondSPA, respondError, config, db, query, req, res) => {
+        respond: (respondImagePage, respondSPA, respondError, user, config, db, query, req, res) => {
 
             new multiparty.Form().parse(req, function(err, fields, files) {
 
@@ -38,9 +38,11 @@ module.exports = [
                     return;
                 }
 
+                // TODO actually hash the password
+                const hashedPassword = fields.password[0];
+
                 // check if user exists
-                // TODO hash password
-                db.get(`SELECT 1 FROM Users WHERE Username="${ fields.username[0] }" AND HashedPassword="${ fields.password[0] }";`, (err, exists) => {
+                db.get(`SELECT 1 FROM Users WHERE Username="${ fields.username[0] }" AND HashedPassword="${ hashedPassword }";`, (err, exists) => {
 
                     if (!err && exists) {
 
@@ -49,9 +51,10 @@ module.exports = [
 
                         // store session cookie (so we can recognize when the same user is making a request)
                         // also overrides previous session cookie, meaning the same user can't be logged in on two devices 
-                        db.run(`UPDATE Users SET SessionCookie = "${ sessionCookie }" WHERE Username="${ fields.username[0] }" AND HashedPassword="${ fields.password[0] }";`);
+                        db.run(`UPDATE Users SET SessionCookie = "${ sessionCookie }" WHERE Username="${ fields.username[0] }" AND HashedPassword="${ hashedPassword }";`);
 
                         // respond with session cookie in header
+                        // no expiry provided means it'll persist only as long as the browser is loaded in memory
                         res.writeHead(200, {
                             "Content-Type": "text/html; charset=utf-8",
                             "Set-Cookie": "session=" + sessionCookie
