@@ -24,7 +24,7 @@ module.exports = [
 
                 count = count.count;
 
-                const pageTotal = Math.ceil(count / config.itemsPerPage);
+                const pageTotal = Math.max(1, Math.ceil(count / config.itemsPerPage));
                 const pageIndex = (() => {
                     const input = Number(query.get("page") || 1);
                     if (isNaN(input))
