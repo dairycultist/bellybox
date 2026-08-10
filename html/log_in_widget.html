@@ -2,14 +2,22 @@
 
     <strong>Log in</strong>
 
+    <p>You don't need an account to browse, only to upload (or moderate if you're a mod). Account creation hasn't been added yet.</p>
+
     <table>
         <tr>
             <th><label for="username">Username:</label></th>
-            <td><input type="text" id="username" name="username" maxlength="32" placeholder="max 32ch"></input></td>
+            <td>
+                <input type="text" id="username" name="username" maxlength="32"></input>
+                <div style="font-size: small;">min 3ch, max 32ch, only use A-Z, a-z, 0-9, and _</div>
+            </td>
         </tr>
         <tr>
             <th><label for="password">Password:</label></th>
-            <td><input type="password" id="password" name="password" maxlength="600" placeholder="max 600ch, go nuts"></input></td>
+            <td>
+                <input type="password" id="password" name="password" maxlength="600"></input>
+                <div style="font-size: small;">min 7ch, max 600ch, go nuts</div>
+            </td>
         </tr>
     </table>
 

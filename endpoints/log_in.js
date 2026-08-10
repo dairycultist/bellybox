@@ -1,3 +1,5 @@
+const multiparty = require("multiparty");
+
 // TODO all responses first check if a valid session cookie was sent by the client -- if it was, we treat them as logged in
 
 module.exports = [
@@ -9,23 +11,35 @@ module.exports = [
 
                 if (/[^A-Za-z0-9_]/.test(fields.username[0])) {
 
-                    respondError(422, "Username has invalid characters; only use A-Z, a-z, 0-9, and _.");
+                    respondError(res, 422, "Username has invalid characters; only use A-Z, a-z, 0-9, and _.");
                     return;
                 }
 
                 if (fields.username[0].length < 3) {
 
-                    respondError(422, "Username must be at least 3 characters.");
+                    respondError(res, 422, "Username must be at least 3 characters.");
                     return;
                 }
 
                 if (fields.username[0].length > 32) {
 
-                    respondError(422, "Username must be at most 32 characters.");
+                    respondError(res, 422, "Username must be at most 32 characters.");
                     return;
                 }
 
-                respondError(200, "You would have logged in successfully, but we're just testing!");
+                if (fields.password[0].length < 7) {
+
+                    respondError(res, 422, "Password must be at least 7 characters.");
+                    return;
+                }
+
+                if (fields.password[0].length > 600) {
+
+                    respondError(res, 422, "Password must be at most 600 characters.");
+                    return;
+                }
+
+                respondError(res, 200, "You would have logged in successfully, but we're just testing!");
 
                 // create and store session cookie and respond with it in header
                 // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Set-Cookie
