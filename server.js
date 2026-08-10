@@ -130,12 +130,12 @@ function respondSPA(res, user, insert) {
     res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
     res.end(
         fs.readFileSync("./html/SPA.html", "utf8")
+            .replace("<!-- upload -->", user ? fs.readFileSync("./html/upload_widget.html", "utf8").replace("<!-- upload description -->", require("./config.json").uploadDescription) : "")
             .replace("<!-- user -->", user ? fs.readFileSync("./html/logged_in_widget.html", "utf8").replace("<!-- username -->", user.Username) : fs.readFileSync("./html/log_in_widget.html", "utf8"))
             .replace("<!-- insert -->", insert)
             .replace("<!-- tags -->", getTagInputHTML("upload"))
             .replace("<!-- tags -->", getTagInputHTML("filter"))
             .replaceAll("<!-- title -->", require("./config.json").title)
-            .replaceAll("<!-- upload description -->", require("./config.json").uploadDescription)
     );
 
     console.log("Response: SPA");

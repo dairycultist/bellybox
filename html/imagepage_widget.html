@@ -12,8 +12,12 @@
         <th>Description: </th>
         <td>DESCRIPTION</td>
     </tr>
+    <tr>
+        <th>Uploaded by: </th>
+        <td>not a thing yet</td>
+    </tr>
 </table>
-<form action="/request_edit" method="post" enctype="multipart/form-data">
+<form class="box" action="/request_edit" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" value="ID">
     <strong>Request edit</strong>
     <br><br>
@@ -25,7 +29,7 @@
     </table>
     <input type="submit" value="Request"/>
 </form>
-<form action="/request_delete" method="post" enctype="multipart/form-data">
+<form class="box" action="/request_delete" method="post" enctype="multipart/form-data">
     <input type="hidden" name="id" value="ID">
     <strong>Request deletion</strong>
     <br><br>

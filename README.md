@@ -23,11 +23,12 @@ No forum/commenting planned, since it makes moderating harder and encourages tox
 
 ### Moderation/Quality Control
 
-- [ ] Account system
+- [x] Account system
   - Simple username-password, no email
-  - Passwords stored [salted and hashed](https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security), obviously
-  - You can only make an account if you get a single use invite code from the owner
-  - Accounts can be `untrusted`, `trusted` (much more lenient rate limiting), or `moderator`
+  - Only logged-in users may upload images
+  - TODO Passwords stored [salted and hashed](https://www.w3schools.com/nodejs/nodejs_crypto.asp#:~:text=Password%20Security), obviously
+  - TODO You can only make an account if you get a single use invite code from the owner
+  - TODO Accounts can be `untrusted`, `trusted` (much more lenient rate limiting), or `moderator`
 - [x] "Console mode" (by passing `--console` command line argument)
   - `logs` - prints all edit/deletion requests 
   - `delete <id>` - deletes an image from the db/filesystem
